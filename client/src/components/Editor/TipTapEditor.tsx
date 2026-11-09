@@ -77,7 +77,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
     editable: !isTrashView,
     editorProps: {
       attributes: {
-        class: 'prose prose-invert max-w-none focus:outline-none min-h-[400px] px-8 py-4'
+        class: 'focus:outline-none min-h-[400px] px-8 py-4 text-apple-lightText dark:text-apple-darkText'
       },
       handlePaste: (view, event) => {
         const items = event.clipboardData?.items;
@@ -212,7 +212,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-3rem)] overflow-hidden bg-apple-darkBg dark:bg-apple-darkBg light:bg-apple-lightBg">
+    <div className="flex-1 flex flex-col h-[calc(100vh-3rem)] overflow-hidden bg-apple-lightBg dark:bg-apple-darkBg text-apple-lightText dark:text-apple-darkText transition-colors">
       {/* Top Toolbar */}
       <EditorToolbar
         editor={editor}
@@ -240,7 +240,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
             placeholder="Title"
             value={title}
             onChange={handleTitleChange}
-            className="w-full text-2xl sm:text-3xl font-bold bg-transparent outline-none border-none placeholder:text-apple-darkMuted/60 text-white dark:text-white light:text-black tracking-tight"
+            className="w-full text-2xl sm:text-3xl font-bold bg-transparent outline-none border-none placeholder:text-apple-lightMuted/60 dark:placeholder:text-apple-darkMuted/60 text-apple-lightText dark:text-white tracking-tight"
           />
         </div>
 

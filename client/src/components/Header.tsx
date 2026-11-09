@@ -29,34 +29,34 @@ export const Header: React.FC<HeaderProps> = ({
   saveStatus
 }) => {
   return (
-    <header className="h-12 border-b border-apple-darkBorder dark:border-apple-darkBorder bg-apple-darkSidebar dark:bg-apple-darkSidebar light:bg-apple-lightSidebar light:border-apple-lightBorder flex items-center justify-between px-3.5 z-20 select-none">
+    <header className="h-12 border-b border-apple-lightBorder dark:border-apple-darkBorder bg-apple-lightSidebar dark:bg-apple-darkSidebar flex items-center justify-between px-3.5 z-20 select-none transition-colors">
       <div className="flex items-center gap-2.5">
         <button
           onClick={onToggleSidebar}
           title={isSidebarOpen ? "Collapse folders (Cmd+\\)" : "Expand folders (Cmd+\\)"}
-          className="p-1.5 rounded-md hover:bg-apple-darkHover dark:hover:bg-apple-darkHover light:hover:bg-apple-lightHover text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted transition-colors"
+          className="p-1.5 rounded-md hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
         >
           {isSidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
         </button>
 
         <div className="flex items-center gap-2">
           {/* Apple Notes Distinctive Yellow/Amber Notepad Icon */}
-          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#f8d068] via-[#e5a93c] to-[#c48920] flex items-center justify-center shadow-sm text-black">
+          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#f8d068] via-[#e5a93c] to-[#c48920] flex items-center justify-center shadow-xs text-black">
             <span className="font-semibold text-xs leading-none"></span>
           </div>
-          <span className="font-semibold text-sm tracking-tight text-white dark:text-white light:text-black">
+          <span className="font-semibold text-sm tracking-tight text-apple-lightText dark:text-apple-darkText">
             Notes
           </span>
-          <span className="hidden sm:inline-block text-[11px] font-medium px-2 py-0.5 rounded-full bg-apple-yellow/15 text-apple-yellow">
+          <span className="hidden sm:inline-block text-[11px] font-medium px-2 py-0.5 rounded-full bg-apple-yellow/15 text-amber-700 dark:text-apple-yellow">
             Self-Hosted
           </span>
         </div>
       </div>
 
       {/* Center status indicator */}
-      <div className="flex items-center text-xs text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted">
+      <div className="flex items-center text-xs text-apple-lightMuted dark:text-apple-darkMuted">
         {saveStatus === 'saving' && (
-          <span className="flex items-center gap-1.5 animate-pulse text-apple-yellow">
+          <span className="flex items-center gap-1.5 animate-pulse text-amber-600 dark:text-apple-yellow">
             <span className="w-2 h-2 rounded-full bg-apple-yellow"></span>
             Saving...
           </span>
@@ -77,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onOpenShortcuts}
           title="Keyboard Shortcuts (Cmd+/)"
-          className="p-1.5 rounded-md hover:bg-apple-darkHover dark:hover:bg-apple-darkHover light:hover:bg-apple-lightHover text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted hover:text-white dark:hover:text-white light:hover:text-black transition-colors"
+          className="p-1.5 rounded-md hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
         >
           <Keyboard size={17} />
         </button>
@@ -85,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onToggleTheme}
           title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          className="p-1.5 rounded-md hover:bg-apple-darkHover dark:hover:bg-apple-darkHover light:hover:bg-apple-lightHover text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted hover:text-white dark:hover:text-white light:hover:text-black transition-colors"
+          className="p-1.5 rounded-md hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
         >
           {isDarkMode ? <Sun size={17} /> : <Moon size={17} />}
         </button>
@@ -93,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onOpenSettings}
           title="Settings, Backups & Storage"
-          className="p-1.5 rounded-md hover:bg-apple-darkHover dark:hover:bg-apple-darkHover light:hover:bg-apple-lightHover text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted hover:text-white dark:hover:text-white light:hover:text-black transition-colors"
+          className="p-1.5 rounded-md hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
         >
           <Database size={17} />
         </button>

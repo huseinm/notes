@@ -72,14 +72,14 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
   };
 
   return (
-    <div className="h-12 border-b border-apple-darkBorder/60 dark:border-apple-darkBorder/60 light:border-apple-lightBorder bg-apple-darkBg dark:bg-apple-darkBg light:bg-apple-lightBg flex items-center justify-between px-4 select-none gap-2">
+    <div className="h-12 border-b border-apple-lightBorder dark:border-apple-darkBorder/60 bg-apple-lightBg dark:bg-apple-darkBg flex items-center justify-between px-4 select-none gap-2 transition-colors">
       {/* Left side: Delete / Restore */}
       <div className="flex items-center gap-1.5">
         {isTrashView ? (
           <button
             onClick={onRestoreNote}
             title="Put Back Note"
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-500/20 hover:bg-emerald-500 text-emerald-600 dark:text-emerald-400 hover:text-white transition-colors"
           >
             <RotateCcw size={14} />
             <span>Restore</span>
@@ -88,7 +88,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           <button
             onClick={onDeleteNote}
             title="Delete Note"
-            className="p-1.5 rounded-md hover:bg-rose-500/15 text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted hover:text-rose-400 transition-colors"
+            className="p-1.5 rounded-md hover:bg-rose-500/15 text-apple-lightMuted dark:text-apple-darkMuted hover:text-rose-500 dark:hover:text-rose-400 transition-colors"
           >
             <Trash2 size={17} />
           </button>
@@ -100,7 +100,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
             <button
               onClick={() => setShowFolderMenu(!showFolderMenu)}
               title="Move to Folder"
-              className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-apple-darkHover dark:hover:bg-apple-darkHover light:hover:bg-apple-lightHover text-xs text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted transition-colors"
+              className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-xs text-apple-lightMuted dark:text-apple-darkMuted transition-colors"
             >
               <FolderIcon size={14} />
               <ChevronDown size={11} />
@@ -109,9 +109,9 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
             {showFolderMenu && (
               <div
                 onMouseLeave={() => setShowFolderMenu(false)}
-                className="absolute left-0 top-9 z-30 w-44 py-1 bg-[#252528] dark:bg-[#252528] light:bg-white border border-apple-darkBorder dark:border-apple-darkBorder light:border-apple-lightBorder rounded-lg shadow-xl text-xs"
+                className="absolute left-0 top-9 z-30 w-44 py-1 bg-white dark:bg-[#252528] border border-apple-lightBorder dark:border-apple-darkBorder rounded-lg shadow-xl text-xs"
               >
-                <div className="px-3 py-1 font-semibold text-[10px] text-apple-darkMuted uppercase">
+                <div className="px-3 py-1 font-semibold text-[10px] text-apple-lightMuted dark:text-apple-darkMuted uppercase">
                   Move Note to:
                 </div>
                 {folders.map((f) => (
@@ -121,8 +121,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                       onMoveToFolder(f.id);
                       setShowFolderMenu(false);
                     }}
-                    className={`w-full text-left px-3 py-1.5 hover:bg-apple-darkHover dark:hover:bg-apple-darkHover light:hover:bg-apple-lightHover flex items-center justify-between ${
-                      currentFolderId === f.id ? 'text-apple-yellow font-medium' : 'text-apple-darkText'
+                    className={`w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover flex items-center justify-between ${
+                      currentFolderId === f.id ? 'text-amber-600 dark:text-apple-yellow font-medium' : 'text-apple-lightText dark:text-apple-darkText'
                     }`}
                   >
                     <span className="truncate">{f.name}</span>
@@ -142,7 +142,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           <button
             onClick={() => setShowTypographyMenu(!showTypographyMenu)}
             title="Text Style (Aa)"
-            className="flex items-center gap-0.5 px-2 py-1 rounded-md hover:bg-apple-darkHover dark:hover:bg-apple-darkHover light:hover:bg-apple-lightHover text-apple-yellow font-bold text-sm transition-colors"
+            className="flex items-center gap-0.5 px-2 py-1 rounded-md hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-amber-600 dark:text-apple-yellow font-bold text-sm transition-colors"
           >
             <span>Aa</span>
             <ChevronDown size={12} />
@@ -151,15 +151,15 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           {showTypographyMenu && (
             <div
               onMouseLeave={() => setShowTypographyMenu(false)}
-              className="absolute left-0 top-9 z-30 w-40 py-1 bg-[#252528] dark:bg-[#252528] light:bg-white border border-apple-darkBorder dark:border-apple-darkBorder light:border-apple-lightBorder rounded-lg shadow-xl text-xs space-y-0.5"
+              className="absolute left-0 top-9 z-30 w-40 py-1 bg-white dark:bg-[#252528] border border-apple-lightBorder dark:border-apple-darkBorder rounded-lg shadow-xl text-xs space-y-0.5 text-apple-lightText dark:text-apple-darkText"
             >
               <button
                 onClick={() => {
                   editor.chain().focus().toggleHeading({ level: 1 }).run();
                   setShowTypographyMenu(false);
                 }}
-                className={`w-full text-left px-3 py-1.5 hover:bg-apple-darkHover flex items-center justify-between ${
-                  editor.isActive('heading', { level: 1 }) ? 'text-apple-yellow font-bold' : ''
+                className={`w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover flex items-center justify-between ${
+                  editor.isActive('heading', { level: 1 }) ? 'text-amber-600 dark:text-apple-yellow font-bold' : ''
                 }`}
               >
                 <span className="font-bold text-base">Title</span>
@@ -171,8 +171,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                   editor.chain().focus().toggleHeading({ level: 2 }).run();
                   setShowTypographyMenu(false);
                 }}
-                className={`w-full text-left px-3 py-1.5 hover:bg-apple-darkHover flex items-center justify-between ${
-                  editor.isActive('heading', { level: 2 }) ? 'text-apple-yellow font-semibold' : ''
+                className={`w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover flex items-center justify-between ${
+                  editor.isActive('heading', { level: 2 }) ? 'text-amber-600 dark:text-apple-yellow font-semibold' : ''
                 }`}
               >
                 <span className="font-semibold text-sm">Heading</span>
@@ -184,8 +184,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                   editor.chain().focus().toggleHeading({ level: 3 }).run();
                   setShowTypographyMenu(false);
                 }}
-                className={`w-full text-left px-3 py-1.5 hover:bg-apple-darkHover flex items-center justify-between ${
-                  editor.isActive('heading', { level: 3 }) ? 'text-apple-yellow font-medium' : ''
+                className={`w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover flex items-center justify-between ${
+                  editor.isActive('heading', { level: 3 }) ? 'text-amber-600 dark:text-apple-yellow font-medium' : ''
                 }`}
               >
                 <span className="font-medium text-xs">Subheading</span>
@@ -197,8 +197,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                   editor.chain().focus().setParagraph().run();
                   setShowTypographyMenu(false);
                 }}
-                className={`w-full text-left px-3 py-1.5 hover:bg-apple-darkHover flex items-center justify-between ${
-                  editor.isActive('paragraph') ? 'text-apple-yellow' : ''
+                className={`w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover flex items-center justify-between ${
+                  editor.isActive('paragraph') ? 'text-amber-600 dark:text-apple-yellow' : ''
                 }`}
               >
                 <span>Body</span>
@@ -210,8 +210,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                   editor.chain().focus().toggleCodeBlock().run();
                   setShowTypographyMenu(false);
                 }}
-                className={`w-full text-left px-3 py-1.5 hover:bg-apple-darkHover font-mono flex items-center justify-between ${
-                  editor.isActive('codeBlock') ? 'text-apple-yellow' : ''
+                className={`w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover font-mono flex items-center justify-between ${
+                  editor.isActive('codeBlock') ? 'text-amber-600 dark:text-apple-yellow' : ''
                 }`}
               >
                 <span>Monospaced</span>
@@ -227,8 +227,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           title="Checklist / To-do"
           className={`p-1.5 rounded-md transition-colors ${
             editor.isActive('taskList')
-              ? 'bg-apple-yellow/20 text-apple-yellow'
-              : 'hover:bg-apple-darkHover text-apple-darkMuted hover:text-white'
+              ? 'bg-apple-yellow/20 text-amber-700 dark:text-apple-yellow'
+              : 'hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white'
           }`}
         >
           <CheckSquare size={17} />
@@ -241,8 +241,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
             title="Table"
             className={`p-1.5 rounded-md transition-colors ${
               editor.isActive('table')
-                ? 'bg-apple-yellow/20 text-apple-yellow'
-                : 'hover:bg-apple-darkHover text-apple-darkMuted hover:text-white'
+                ? 'bg-apple-yellow/20 text-amber-700 dark:text-apple-yellow'
+                : 'hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white'
             }`}
           >
             <TableIcon size={17} />
@@ -251,26 +251,26 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           {showTableMenu && (
             <div
               onMouseLeave={() => setShowTableMenu(false)}
-              className="absolute left-0 top-9 z-30 w-48 py-1 bg-[#252528] dark:bg-[#252528] light:bg-white border border-apple-darkBorder rounded-lg shadow-xl text-xs space-y-0.5"
+              className="absolute left-0 top-9 z-30 w-48 py-1 bg-white dark:bg-[#252528] border border-apple-lightBorder dark:border-apple-darkBorder rounded-lg shadow-xl text-xs space-y-0.5 text-apple-lightText dark:text-apple-darkText"
             >
               <button
                 onClick={() => {
                   editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
                   setShowTableMenu(false);
                 }}
-                className="w-full text-left px-3 py-1.5 hover:bg-apple-darkHover"
+                className="w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover"
               >
                 Insert Table (3x3)
               </button>
               {editor.isActive('table') && (
                 <>
-                  <div className="border-t border-apple-darkBorder/40 my-1"></div>
+                  <div className="border-t border-apple-lightBorder dark:border-apple-darkBorder/40 my-1"></div>
                   <button
                     onClick={() => {
                       editor.chain().focus().addRowAfter().run();
                       setShowTableMenu(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-apple-darkHover"
+                    className="w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover"
                   >
                     Add Row Below
                   </button>
@@ -279,7 +279,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                       editor.chain().focus().addColumnAfter().run();
                       setShowTableMenu(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-apple-darkHover"
+                    className="w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover"
                   >
                     Add Column Right
                   </button>
@@ -288,7 +288,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                       editor.chain().focus().deleteRow().run();
                       setShowTableMenu(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-apple-darkHover text-rose-400"
+                    className="w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-rose-500"
                   >
                     Delete Row
                   </button>
@@ -297,7 +297,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                       editor.chain().focus().deleteColumn().run();
                       setShowTableMenu(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-apple-darkHover text-rose-400"
+                    className="w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-rose-500"
                   >
                     Delete Column
                   </button>
@@ -306,7 +306,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                       editor.chain().focus().deleteTable().run();
                       setShowTableMenu(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-apple-darkHover text-rose-400"
+                    className="w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-rose-500"
                   >
                     Delete Entire Table
                   </button>
@@ -317,7 +317,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
         </div>
 
         {/* Separator */}
-        <div className="h-4 w-px bg-apple-darkBorder mx-1 hidden sm:block"></div>
+        <div className="h-4 w-px bg-apple-lightBorder dark:bg-apple-darkBorder mx-1 hidden sm:block"></div>
 
         {/* Basic formatting */}
         <button
@@ -325,8 +325,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           title="Bold (Cmd+B)"
           className={`p-1.5 rounded-md transition-colors hidden sm:inline-flex ${
             editor.isActive('bold')
-              ? 'bg-apple-yellow/20 text-apple-yellow'
-              : 'hover:bg-apple-darkHover text-apple-darkMuted hover:text-white'
+              ? 'bg-apple-yellow/20 text-amber-700 dark:text-apple-yellow'
+              : 'hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white'
           }`}
         >
           <Bold size={16} />
@@ -337,8 +337,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           title="Italic (Cmd+I)"
           className={`p-1.5 rounded-md transition-colors hidden sm:inline-flex ${
             editor.isActive('italic')
-              ? 'bg-apple-yellow/20 text-apple-yellow'
-              : 'hover:bg-apple-darkHover text-apple-darkMuted hover:text-white'
+              ? 'bg-apple-yellow/20 text-amber-700 dark:text-apple-yellow'
+              : 'hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white'
           }`}
         >
           <Italic size={16} />
@@ -349,8 +349,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           title="Underline (Cmd+U)"
           className={`p-1.5 rounded-md transition-colors hidden sm:inline-flex ${
             editor.isActive('underline')
-              ? 'bg-apple-yellow/20 text-apple-yellow'
-              : 'hover:bg-apple-darkHover text-apple-darkMuted hover:text-white'
+              ? 'bg-apple-yellow/20 text-amber-700 dark:text-apple-yellow'
+              : 'hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white'
           }`}
         >
           <UnderlineIcon size={16} />
@@ -361,8 +361,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           title="Strikethrough"
           className={`p-1.5 rounded-md transition-colors hidden sm:inline-flex ${
             editor.isActive('strike')
-              ? 'bg-apple-yellow/20 text-apple-yellow'
-              : 'hover:bg-apple-darkHover text-apple-darkMuted hover:text-white'
+              ? 'bg-apple-yellow/20 text-amber-700 dark:text-apple-yellow'
+              : 'hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white'
           }`}
         >
           <Strikethrough size={16} />
@@ -373,8 +373,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           title="Bullet List"
           className={`p-1.5 rounded-md transition-colors hidden md:inline-flex ${
             editor.isActive('bulletList')
-              ? 'bg-apple-yellow/20 text-apple-yellow'
-              : 'hover:bg-apple-darkHover text-apple-darkMuted hover:text-white'
+              ? 'bg-apple-yellow/20 text-amber-700 dark:text-apple-yellow'
+              : 'hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white'
           }`}
         >
           <List size={16} />
@@ -385,8 +385,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           title="Numbered List"
           className={`p-1.5 rounded-md transition-colors hidden md:inline-flex ${
             editor.isActive('orderedList')
-              ? 'bg-apple-yellow/20 text-apple-yellow'
-              : 'hover:bg-apple-darkHover text-apple-darkMuted hover:text-white'
+              ? 'bg-apple-yellow/20 text-amber-700 dark:text-apple-yellow'
+              : 'hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white'
           }`}
         >
           <ListOrdered size={16} />
@@ -397,8 +397,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           title="Quote"
           className={`p-1.5 rounded-md transition-colors hidden lg:inline-flex ${
             editor.isActive('blockquote')
-              ? 'bg-apple-yellow/20 text-apple-yellow'
-              : 'hover:bg-apple-darkHover text-apple-darkMuted hover:text-white'
+              ? 'bg-apple-yellow/20 text-amber-700 dark:text-apple-yellow'
+              : 'hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white'
           }`}
         >
           <Quote size={16} />
@@ -415,7 +415,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
         <button
           onClick={() => fileInputRef.current?.click()}
           title="Attach Image"
-          className="p-1.5 rounded-md hover:bg-apple-darkHover text-apple-darkMuted hover:text-white transition-colors"
+          className="p-1.5 rounded-md hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
         >
           <ImageIcon size={16} />
         </button>
@@ -429,11 +429,11 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           title={isPinned ? "Unpin Note" : "Pin Note to top"}
           className={`p-1.5 rounded-md transition-colors ${
             isPinned
-              ? 'bg-apple-yellow/20 text-apple-yellow fill-apple-yellow'
-              : 'hover:bg-apple-darkHover text-apple-darkMuted hover:text-white'
+              ? 'bg-apple-yellow/20 text-amber-700 dark:text-apple-yellow fill-apple-yellow'
+              : 'hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white'
           }`}
         >
-          <Pin size={17} className={isPinned ? 'fill-current' : ''} />
+          <Pin size={17} className={isPinned ? 'fill-current text-apple-yellow' : ''} />
         </button>
 
         {/* Export / Share Dropdown */}
@@ -441,7 +441,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           <button
             onClick={() => setShowExportMenu(!showExportMenu)}
             title="Share / Export Note"
-            className="p-1.5 rounded-md hover:bg-apple-darkHover text-apple-darkMuted hover:text-white transition-colors"
+            className="p-1.5 rounded-md hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
           >
             <Share2 size={17} />
           </button>
@@ -449,14 +449,14 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           {showExportMenu && (
             <div
               onMouseLeave={() => setShowExportMenu(false)}
-              className="absolute right-0 top-9 z-30 w-44 py-1 bg-[#252528] dark:bg-[#252528] light:bg-white border border-apple-darkBorder rounded-lg shadow-xl text-xs space-y-0.5"
+              className="absolute right-0 top-9 z-30 w-44 py-1 bg-white dark:bg-[#252528] border border-apple-lightBorder dark:border-apple-darkBorder rounded-lg shadow-xl text-xs space-y-0.5 text-apple-lightText dark:text-apple-darkText"
             >
               <button
                 onClick={() => {
                   onExport('markdown');
                   setShowExportMenu(false);
                 }}
-                className="w-full text-left px-3 py-1.5 hover:bg-apple-darkHover flex items-center gap-2"
+                className="w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover flex items-center gap-2"
               >
                 <FileCode size={14} className="text-apple-yellow" />
                 <span>Export as Markdown</span>
@@ -466,7 +466,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                   onExport('txt');
                   setShowExportMenu(false);
                 }}
-                className="w-full text-left px-3 py-1.5 hover:bg-apple-darkHover flex items-center gap-2"
+                className="w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover flex items-center gap-2"
               >
                 <Download size={14} className="text-apple-yellow" />
                 <span>Export Plain Text</span>
@@ -476,7 +476,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                   onExport('html');
                   setShowExportMenu(false);
                 }}
-                className="w-full text-left px-3 py-1.5 hover:bg-apple-darkHover flex items-center gap-2"
+                className="w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover flex items-center gap-2"
               >
                 <Download size={14} className="text-apple-yellow" />
                 <span>Export HTML</span>
@@ -486,7 +486,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                   onExport('print');
                   setShowExportMenu(false);
                 }}
-                className="w-full text-left px-3 py-1.5 hover:bg-apple-darkHover flex items-center gap-2"
+                className="w-full text-left px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover flex items-center gap-2"
               >
                 <Printer size={14} className="text-apple-yellow" />
                 <span>Print / Save as PDF</span>
@@ -500,7 +500,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           <button
             onClick={onNewNote}
             title="New Note (Cmd+N)"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-apple-yellow hover:bg-apple-yellowHover text-black font-semibold text-xs transition-colors shadow-sm"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-apple-yellow hover:bg-apple-yellowHover text-black font-semibold text-xs transition-colors shadow-xs"
           >
             <SquarePen size={14} />
             <span className="hidden sm:inline">New Note</span>

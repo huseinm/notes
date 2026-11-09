@@ -34,14 +34,14 @@ export const FolderModal: React.FC<FolderModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-      <div className="w-full max-w-sm bg-[#252528] dark:bg-[#252528] light:bg-white border border-apple-darkBorder rounded-xl shadow-2xl p-5 select-none">
-        <div className="flex items-center justify-between pb-3 border-b border-apple-darkBorder/60">
-          <h3 className="font-semibold text-sm text-white dark:text-white light:text-black">
+      <div className="w-full max-w-sm bg-white dark:bg-[#252528] border border-apple-lightBorder dark:border-apple-darkBorder rounded-xl shadow-2xl p-5 select-none text-apple-lightText dark:text-apple-darkText">
+        <div className="flex items-center justify-between pb-3 border-b border-apple-lightBorder dark:border-apple-darkBorder/60">
+          <h3 className="font-semibold text-sm text-apple-lightText dark:text-white">
             Rename Folder
           </h3>
           <button
             onClick={onClose}
-            className="text-apple-darkMuted hover:text-white dark:hover:text-white light:hover:text-black"
+            className="text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
           >
             <X size={16} />
           </button>
@@ -49,7 +49,7 @@ export const FolderModal: React.FC<FolderModalProps> = ({
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-apple-darkMuted mb-1">
+            <label className="block text-xs font-medium text-apple-lightMuted dark:text-apple-darkMuted mb-1">
               Folder Name
             </label>
             <input
@@ -57,7 +57,7 @@ export const FolderModal: React.FC<FolderModalProps> = ({
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full text-sm px-3 py-2 rounded-lg bg-black/30 dark:bg-black/30 light:bg-black/5 border border-apple-darkBorder outline-none focus:border-apple-yellow text-white dark:text-white light:text-black"
+              className="w-full text-sm px-3 py-2 rounded-lg bg-black/5 dark:bg-black/30 border border-apple-lightBorder dark:border-apple-darkBorder outline-none focus:border-apple-yellow text-apple-lightText dark:text-white"
             />
           </div>
 
@@ -65,13 +65,13 @@ export const FolderModal: React.FC<FolderModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="text-xs px-3 py-1.5 rounded-lg text-apple-darkMuted hover:text-white transition-colors"
+              className="text-xs px-3 py-1.5 rounded-lg text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="text-xs px-4 py-1.5 rounded-lg bg-apple-yellow hover:bg-apple-yellowHover text-black font-semibold transition-colors shadow-sm"
+              className="text-xs px-4 py-1.5 rounded-lg bg-apple-yellow hover:bg-apple-yellowHover text-black font-semibold transition-colors shadow-xs"
             >
               Save
             </button>

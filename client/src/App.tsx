@@ -292,7 +292,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-apple-darkBg dark:bg-apple-darkBg light:bg-apple-lightBg font-sans text-apple-darkText dark:text-apple-darkText light:text-apple-lightText">
+    <div className="h-screen w-screen flex flex-col overflow-hidden bg-apple-lightBg dark:bg-apple-darkBg font-sans text-apple-lightText dark:text-apple-darkText transition-colors">
       {/* Top Header */}
       <Header
         isSidebarOpen={isSidebarOpen}
@@ -322,8 +322,12 @@ export const App: React.FC = () => {
         {/* Pane 1: Folders Sidebar */}
         <div
           className={`${
-            isSidebarOpen ? 'block' : 'hidden'
-          } ${mobilePane !== 'sidebar' ? 'hidden md:block' : 'block w-full md:w-auto'}`}
+            !isSidebarOpen
+              ? 'hidden'
+              : mobilePane === 'sidebar'
+              ? 'block w-full md:w-auto'
+              : 'hidden md:block'
+          }`}
         >
           <Sidebar
             folders={folders}
@@ -381,7 +385,7 @@ export const App: React.FC = () => {
               onNewNote={handleNewNote}
             />
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted">
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-apple-lightMuted dark:text-apple-darkMuted">
               <FileText size={48} className="mb-3 opacity-30 stroke-[1.2]" />
               <h2 className="text-lg font-semibold mb-1">No Note Selected</h2>
               <p className="text-xs max-w-xs opacity-75 mb-4">

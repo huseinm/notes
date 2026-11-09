@@ -88,28 +88,32 @@
 }
 
 .ProseMirror pre {
-  background: rgba(0, 0, 0, 0.35);
+  background: #f4f4f6;
+  border: 1px solid #e5e5ea;
   border-radius: 8px;
   padding: 0.85rem 1rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.9rem;
   overflow-x: auto;
   margin-bottom: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.light .ProseMirror pre {
-  background: #f4f4f6;
-  border: 1px solid #e5e5ea;
+.dark .ProseMirror pre {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .ProseMirror code {
   background: rgba(229, 169, 60, 0.15);
-  color: #e5a93c;
+  color: #d97706;
   padding: 0.15rem 0.35rem;
   border-radius: 4px;
   font-size: 0.88em;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.dark .ProseMirror code {
+  color: #e5a93c;
 }
 
 /* Task list / Checklist styling like Apple Notes */
@@ -186,36 +190,36 @@ ul[data-type="taskList"] li[data-type="taskItem"][data-checked="true"] > div p {
   margin: 1rem 0;
   overflow: hidden;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid #d1d1d6;
 }
 
-.light .ProseMirror table {
-  border: 1px solid #d1d1d6;
+.dark .ProseMirror table {
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .ProseMirror table td,
 .ProseMirror table th {
   min-width: 1em;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #e5e5ea;
   padding: 8px 12px;
   vertical-align: top;
   box-sizing: border-box;
   position: relative;
 }
 
-.light .ProseMirror table td,
-.light .ProseMirror table th {
-  border: 1px solid #e5e5ea;
+.dark .ProseMirror table td,
+.dark .ProseMirror table th {
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .ProseMirror table th {
   font-weight: 600;
   text-align: left;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: #f2f2f7;
 }
 
-.light .ProseMirror table th {
-  background-color: #f2f2f7;
+.dark .ProseMirror table th {
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
 .ProseMirror img {
@@ -223,7 +227,11 @@ ul[data-type="taskList"] li[data-type="taskItem"][data-checked="true"] > div p {
   height: auto;
   border-radius: 8px;
   margin: 0.75rem 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dark .ProseMirror img {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* Placeholder */
