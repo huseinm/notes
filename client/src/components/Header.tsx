@@ -1,0 +1,103 @@
+import React from 'react';
+import { 
+  PanelLeftClose, 
+  PanelLeft, 
+  Sun, 
+  Moon, 
+  Database, 
+  Keyboard, 
+  CheckCircle2
+} from 'lucide-react';
+
+interface HeaderProps {
+  isSidebarOpen: boolean;
+  onToggleSidebar: () => void;
+  isDarkMode: boolean;
+  onToggleTheme: () => void;
+  onOpenSettings: () => void;
+  onOpenShortcuts: () => void;
+  saveStatus: 'saved' | 'saving' | 'error';
+}
+
+export const Header: React.FC<HeaderProps> = ({
+  isSidebarOpen,
+  onToggleSidebar,
+  isDarkMode,
+  onToggleTheme,
+  onOpenSettings,
+  onOpenShortcuts,
+  saveStatus
+}) => {
+  return (
+    <header className="h-12 border-b border-apple-darkBorder dark:border-apple-darkBorder bg-apple-darkSidebar dark:bg-apple-darkSidebar light:bg-apple-lightSidebar light:border-apple-lightBorder flex items-center justify-between px-3.5 z-20 select-none">
+      <div className="flex items-center gap-2.5">
+        <button
+          onClick={onToggleSidebar}
+          title={isSidebarOpen ? "Collapse folders (Cmd+\\)" : "Expand folders (Cmd+\\)"}
+          className="p-1.5 rounded-md hover:bg-apple-darkHover dark:hover:bg-apple-darkHover light:hover:bg-apple-lightHover text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted transition-colors"
+        >
+          {isSidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
+        </button>
+
+        <div className="flex items-center gap-2">
+          {/* Apple Notes Distinctive Yellow/Amber Notepad Icon */}
+          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#f8d068] via-[#e5a93c] to-[#c48920] flex items-center justify-center shadow-sm text-black">
+            <span className="font-semibold text-xs leading-none"></span>
+          </div>
+          <span className="font-semibold text-sm tracking-tight text-white dark:text-white light:text-black">
+            Notes
+          </span>
+          <span className="hidden sm:inline-block text-[11px] font-medium px-2 py-0.5 rounded-full bg-apple-yellow/15 text-apple-yellow">
+            Self-Hosted
+          </span>
+        </div>
+      </div>
+
+      {/* Center status indicator */}
+      <div className="flex items-center text-xs text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted">
+        {saveStatus === 'saving' && (
+          <span className="flex items-center gap-1.5 animate-pulse text-apple-yellow">
+            <span className="w-2 h-2 rounded-full bg-apple-yellow"></span>
+            Saving...
+          </span>
+        )}
+        {saveStatus === 'saved' && (
+          <span className="flex items-center gap-1 opacity-80">
+            <CheckCircle2 size={12} className="text-emerald-500" />
+            <span className="hidden sm:inline">All changes saved</span>
+          </span>
+        )}
+        {saveStatus === 'error' && (
+          <span className="text-rose-500 font-medium">Save failed</span>
+        )}
+      </div>
+
+      {/* Right Action Icons */}
+      <div className="flex items-center gap-1">
+        <button
+          onClick={onOpenShortcuts}
+          title="Keyboard Shortcuts (Cmd+/)"
+          className="p-1.5 rounded-md hover:bg-apple-darkHover dark:hover:bg-apple-darkHover light:hover:bg-apple-lightHover text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted hover:text-white dark:hover:text-white light:hover:text-black transition-colors"
+        >
+          <Keyboard size={17} />
+        </button>
+
+        <button
+          onClick={onToggleTheme}
+          title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          className="p-1.5 rounded-md hover:bg-apple-darkHover dark:hover:bg-apple-darkHover light:hover:bg-apple-lightHover text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted hover:text-white dark:hover:text-white light:hover:text-black transition-colors"
+        >
+          {isDarkMode ? <Sun size={17} /> : <Moon size={17} />}
+        </button>
+
+        <button
+          onClick={onOpenSettings}
+          title="Settings, Backups & Storage"
+          className="p-1.5 rounded-md hover:bg-apple-darkHover dark:hover:bg-apple-darkHover light:hover:bg-apple-lightHover text-apple-darkMuted dark:text-apple-darkMuted light:text-apple-lightMuted hover:text-white dark:hover:text-white light:hover:text-black transition-colors"
+        >
+          <Database size={17} />
+        </button>
+      </div>
+    </header>
+  );
+};

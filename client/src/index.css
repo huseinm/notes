@@ -1,0 +1,236 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom macOS-style scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(142, 142, 147, 0.25);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(142, 142, 147, 0.45);
+}
+
+/* TipTap Editor Styling */
+.ProseMirror {
+  outline: none;
+  min-height: 100%;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: inherit;
+  user-select: text;
+}
+
+.ProseMirror p {
+  margin-bottom: 0.65rem;
+}
+
+.ProseMirror h1 {
+  font-size: 1.85rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: 1rem;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.02em;
+}
+
+.ProseMirror h2 {
+  font-size: 1.45rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 0.9rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.015em;
+}
+
+.ProseMirror h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-top: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.ProseMirror ul:not([data-type="taskList"]) {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror li {
+  margin-bottom: 0.25rem;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid #e5a93c;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0.75rem;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.ProseMirror pre {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  margin-bottom: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.light .ProseMirror pre {
+  background: #f4f4f6;
+  border: 1px solid #e5e5ea;
+}
+
+.ProseMirror code {
+  background: rgba(229, 169, 60, 0.15);
+  color: #e5a93c;
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.88em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Task list / Checklist styling like Apple Notes */
+ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+ul[data-type="taskList"] li[data-type="taskItem"] {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.4rem;
+  gap: 0.65rem;
+}
+
+ul[data-type="taskList"] li[data-type="taskItem"] > label {
+  user-select: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.2rem;
+}
+
+ul[data-type="taskList"] li[data-type="taskItem"] > label input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 2px solid #8e8e93;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: transparent;
+}
+
+ul[data-type="taskList"] li[data-type="taskItem"] > label input[type="checkbox"]:hover {
+  border-color: #e5a93c;
+}
+
+ul[data-type="taskList"] li[data-type="taskItem"] > label input[type="checkbox"]:checked {
+  background-color: #e5a93c;
+  border-color: #e5a93c;
+}
+
+ul[data-type="taskList"] li[data-type="taskItem"] > label input[type="checkbox"]:checked::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.28rem;
+  border-left: 2px solid #000;
+  border-bottom: 2px solid #000;
+  transform: rotate(-45deg) translate(0.5px, -0.5px);
+}
+
+ul[data-type="taskList"] li[data-type="taskItem"] > div {
+  flex: 1 1 auto;
+}
+
+ul[data-type="taskList"] li[data-type="taskItem"][data-checked="true"] > div p {
+  text-decoration: line-through;
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+/* Tables styling */
+.ProseMirror table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 1rem 0;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.light .ProseMirror table {
+  border: 1px solid #d1d1d6;
+}
+
+.ProseMirror table td,
+.ProseMirror table th {
+  min-width: 1em;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.light .ProseMirror table td,
+.light .ProseMirror table th {
+  border: 1px solid #e5e5ea;
+}
+
+.ProseMirror table th {
+  font-weight: 600;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.light .ProseMirror table th {
+  background-color: #f2f2f7;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 0.75rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Placeholder */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #8e8e93;
+  pointer-events: none;
+  height: 0;
+}
