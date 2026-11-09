@@ -100,7 +100,7 @@ router.get('/:id', (req, res) => {
 // CREATE note
 router.post('/', (req, res) => {
   try {
-    const { folder_id, title = 'New Note', content = '', plain_text = '' } = req.body;
+    const { folder_id, title = '', content = '', plain_text = '' } = req.body;
 
     // If folder_id not provided, assign default folder
     let targetFolderId = folder_id;

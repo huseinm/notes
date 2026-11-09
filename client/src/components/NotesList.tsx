@@ -44,10 +44,24 @@ export const NotesList: React.FC<NotesListProps> = ({
   const renderNoteCard = (note: Note) => {
     const isSelected = note.id === selectedNoteId;
     const formattedDate = formatAppleDate(note.updated_at);
-    // Excerpt: clean first 100 characters of plain text without redundant title
-    let excerpt = note.plain_text || '';
-    if (excerpt.startsWith(note.title)) {
-      excerpt = excerpt.slice(note.title.length).trim();
+
+    // Dynamic title determination like native Apple Notes:
+    // 1. If explicit title is set, use it
+    // 2. Otherwise extract first non-empty line of content
+    // 3. If note is completely empty, display "New Note" in placeholder style
+    const firstLine = (note.plain_text || '')
+      .split('\n')
+      .map((s) => s.trim())
+      .find((s) => s.length > 0) || '';
+
+    const hasCustomTitle = Boolean(note.title && note.title.trim());
+    const displayTitle = hasCustomTitle ? note.title.trim() : (firstLine || 'New Note');
+    const isPlaceholderTitle = !hasCustomTitle && !firstLine;
+
+    // Excerpt: clean text preview after the title
+    let excerpt = (note.plain_text || '').trim();
+    if (displayTitle && excerpt.startsWith(displayTitle)) {
+      excerpt = excerpt.slice(displayTitle.length).trim();
     }
     if (!excerpt) {
       excerpt = 'No additional text';
@@ -64,8 +78,12 @@ export const NotesList: React.FC<NotesListProps> = ({
         }`}
       >
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-sm leading-snug line-clamp-1 flex-1">
-            {note.title || 'Untitled Note'}
+          <h3
+            className={`font-semibold text-sm leading-snug line-clamp-1 flex-1 ${
+              isPlaceholderTitle ? 'italic opacity-60' : ''
+            }`}
+          >
+            {displayTitle}
           </h3>
           {note.is_pinned === 1 && !isTrashView && (
             <Pin size={12} className="text-apple-yellow flex-shrink-0 mt-0.5 fill-apple-yellow" />

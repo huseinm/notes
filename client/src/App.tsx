@@ -123,7 +123,7 @@ export const App: React.FC = () => {
       const targetFolderId = selectedView === 'folder' ? selectedFolderId : null;
       const newNote = await api.createNote({
         folder_id: targetFolderId,
-        title: 'New Note',
+        title: '',
         content: '',
         plain_text: ''
       });

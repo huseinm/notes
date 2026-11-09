@@ -38,14 +38,20 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
   onRestoreNote,
   onNewNote
 }) => {
-  const [title, setTitle] = useState(note.title);
+  const [title, setTitle] = useState(note.title || '');
+  const titleRef = useRef(title);
+  titleRef.current = title;
+  const noteIdRef = useRef(note.id);
+  noteIdRef.current = note.id;
   const titleInputRef = useRef<HTMLInputElement | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Sync state when note changes
+  // Sync state ONLY when switching to a different note
   useEffect(() => {
-    setTitle(note.title);
-  }, [note.id, note.title]);
+    const noteTitle = note.title || '';
+    setTitle(noteTitle);
+    titleRef.current = noteTitle;
+  }, [note.id]);
 
   const editor = useEditor({
     extensions: [
@@ -128,7 +134,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       const text = editor.getText();
-      scheduleSave(title, html, text);
+      scheduleSave(titleRef.current, html, text);
     }
   });
 
@@ -143,6 +149,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
     setTitle(newTitle);
+    titleRef.current = newTitle;
     const html = editor ? editor.getHTML() : note.content;
     const text = editor ? editor.getText() : note.plain_text;
     scheduleSave(newTitle, html, text);
@@ -153,12 +160,12 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
       clearTimeout(saveTimeoutRef.current);
     }
     saveTimeoutRef.current = setTimeout(() => {
-      onUpdateNote(note.id, {
-        title: newTitle || 'Untitled Note',
+      onUpdateNote(noteIdRef.current, {
+        title: newTitle,
         content: newContent,
         plain_text: newPlainText
       });
-    }, 400);
+    }, 350);
   };
 
   const handleUploadImage = async (file: File) => {
@@ -177,7 +184,9 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
   };
 
   const handleExport = (format: 'markdown' | 'txt' | 'html' | 'print') => {
-    const filename = `${(title || 'Note').replace(/[/\\?%*:|"<>]/g, '_')}`;
+    const firstLine = (note.plain_text || '').split('\n').map((s) => s.trim()).find((s) => s.length > 0) || '';
+    const exportHeading = (title && title.trim()) || firstLine || 'Note';
+    const filename = `${exportHeading.replace(/[/\\?%*:|"<>]/g, '_')}`;
 
     if (format === 'print') {
       window.print();
@@ -191,15 +200,15 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
     if (format === 'html') {
       mimeType = 'text/html';
       fileExt = '.html';
-      contentToExport = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title><style>body{font-family:-apple-system,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.6;}</style></head><body><h1>${title}</h1>${editor?.getHTML() || note.content}</body></html>`;
+      contentToExport = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${exportHeading}</title><style>body{font-family:-apple-system,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.6;}</style></head><body><h1>${exportHeading}</h1>${editor?.getHTML() || note.content}</body></html>`;
     } else if (format === 'markdown') {
       mimeType = 'text/markdown';
       fileExt = '.md';
       // Basic markdown conversion from html
       const rawText = editor ? editor.getText() : note.plain_text;
-      contentToExport = `# ${title}\n\n${rawText}`;
+      contentToExport = `# ${exportHeading}\n\n${rawText}`;
     } else {
-      contentToExport = `${title}\n\n${editor ? editor.getText() : note.plain_text}`;
+      contentToExport = `${exportHeading}\n\n${editor ? editor.getText() : note.plain_text}`;
     }
 
     const blob = new Blob([contentToExport], { type: mimeType });
