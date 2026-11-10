@@ -6,7 +6,8 @@ import {
   Moon, 
   Database, 
   Keyboard, 
-  CheckCircle2
+  CheckCircle2,
+  NotebookPen
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -40,9 +41,9 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
 
         <div className="flex items-center gap-2">
-          {/* Apple Notes Distinctive Yellow/Amber Notepad Icon */}
+          {/* Notes Distinctive Yellow/Amber Notepad Icon */}
           <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#f8d068] via-[#e5a93c] to-[#c48920] flex items-center justify-center shadow-xs text-black">
-            <span className="font-semibold text-xs leading-none"></span>
+            <NotebookPen size={13} strokeWidth={2.3} />
           </div>
           <span className="font-semibold text-sm tracking-tight text-apple-lightText dark:text-apple-darkText">
             Notes

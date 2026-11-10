@@ -59,6 +59,6 @@ if (fs.existsSync(clientDistPath)) {
 }
 
 app.listen(PORT, HOST, () => {
-  console.log(` Apple Notes Server running at http://${HOST}:${PORT}`);
+  console.log(`📝 Notes Server running at http://${HOST}:${PORT}`);
   console.log(`  Uploads directory: ${uploadsDir}`);
 });
