@@ -267,7 +267,11 @@ export const App: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const isCmdOrCtrl = e.metaKey || e.ctrlKey;
 
-      if (isCmdOrCtrl && e.key.toLowerCase() === 'n') {
+      if (e.key === 'Escape') {
+        setEditingFolder(null);
+        setIsSettingsOpen(false);
+        setIsShortcutsOpen(false);
+      } else if (isCmdOrCtrl && e.key.toLowerCase() === 'n') {
         e.preventDefault();
         handleNewNote();
       } else if (isCmdOrCtrl && e.key === '\\') {

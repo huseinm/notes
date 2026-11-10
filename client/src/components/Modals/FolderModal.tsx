@@ -33,8 +33,14 @@ export const FolderModal: React.FC<FolderModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-      <div className="w-full max-w-sm bg-white dark:bg-[#252528] border border-apple-lightBorder dark:border-apple-darkBorder rounded-xl shadow-2xl p-5 select-none text-apple-lightText dark:text-apple-darkText">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-sm bg-white dark:bg-[#252528] border border-apple-lightBorder dark:border-apple-darkBorder rounded-xl shadow-2xl p-5 select-none text-apple-lightText dark:text-apple-darkText"
+      >
         <div className="flex items-center justify-between pb-3 border-b border-apple-lightBorder dark:border-apple-darkBorder/60">
           <h3 className="font-semibold text-sm text-apple-lightText dark:text-white">
             Rename Folder

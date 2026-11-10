@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Folder as FolderIcon, 
   FolderPlus, 
@@ -35,6 +35,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [isCreating, setIsCreating] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
   const [menuFolderId, setMenuFolderId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!menuFolderId) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuFolderId(null);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMenuFolderId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside, true);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside, true);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [menuFolderId]);
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +101,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           const isMenuOpen = menuFolderId === folder.id;
 
           return (
-            <div key={folder.id} className="relative group">
+            <div
+              key={folder.id}
+              ref={isMenuOpen ? menuRef : null}
+              className="relative group"
+            >
               <button
                 onClick={() => onSelectView('folder', folder.id)}
                 onContextMenu={(e) => {
@@ -128,7 +156,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Context Dropdown */}
               {isMenuOpen && (
                 <div
-                  onMouseLeave={() => setMenuFolderId(null)}
                   className="absolute right-2 top-9 z-30 w-36 py-1 bg-white dark:bg-[#252528] border border-apple-lightBorder dark:border-apple-darkBorder rounded-lg shadow-xl text-xs"
                 >
                   <button
