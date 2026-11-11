@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { uploadsDir } from './db.js';
+import { db, uploadsDir } from './db.js';
 import foldersRouter from './routes/folders.js';
 import notesRouter from './routes/notes.js';
 import uploadRouter from './routes/upload.js';
@@ -31,7 +31,7 @@ app.use('/uploads', express.static(uploadsDir));
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    app: 'Apple Notes Self-Hosted',
+    app: 'Notes Self-Hosted',
     version: '1.0.0',
     timestamp: new Date().toISOString()
   });
@@ -58,7 +58,23 @@ if (fs.existsSync(clientDistPath)) {
   });
 }
 
-app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
   console.log(`📝 Notes Server running at http://${HOST}:${PORT}`);
   console.log(`  Uploads directory: ${uploadsDir}`);
 });
+
+// Graceful shutdown for Docker / NAS environments
+const shutdown = (signal) => {
+  console.log(`\nReceived ${signal}. Closing HTTP server and SQLite database...`);
+  server.close(() => {
+    try {
+      db.close();
+    } catch (err) {
+      console.error('Error closing SQLite database:', err);
+    }
+    process.exit(0);
+  });
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

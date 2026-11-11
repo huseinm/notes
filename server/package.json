@@ -1,7 +1,7 @@
 {
-  "name": "apple-notes-server",
+  "name": "notes-server",
   "version": "1.0.0",
-  "description": "Lightweight SQLite backend for self-hosted Apple Notes",
+  "description": "Lightweight SQLite backend for Self-Hosted Notes",
   "main": "src/index.js",
   "type": "module",
   "scripts": {

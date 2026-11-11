@@ -1,7 +1,7 @@
 {
-  "name": "apple-notes-self-hosted",
+  "name": "notes-self-hosted",
   "version": "1.0.0",
-  "description": "A beautiful, lightweight, self-hosted notes app inspired by Apple Notes / iCloud Notes",
+  "description": "A lightweight, minimalist, self-hosted notes web app with Docker and SQLite",
   "type": "module",
   "private": true,
   "scripts": {
@@ -14,14 +14,13 @@
   },
   "keywords": [
     "notes",
-    "apple-notes",
-    "icloud-notes",
     "self-hosted",
     "docker",
     "nas",
     "sqlite",
     "tiptap",
-    "minimalist"
+    "minimalist",
+    "markdown"
   ],
   "author": "Husein Melkic",
   "license": "MIT"

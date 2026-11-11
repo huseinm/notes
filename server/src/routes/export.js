@@ -17,7 +17,7 @@ router.get('/backup', (req, res) => {
     };
 
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', `attachment; filename="apple-notes-backup-${new Date().toISOString().slice(0, 10)}.json"`);
+    res.setHeader('Content-Disposition', `attachment; filename="notes-backup-${new Date().toISOString().slice(0, 10)}.json"`);
     res.send(JSON.stringify(backupData, null, 2));
   } catch (error) {
     console.error('Backup export failed:', error);

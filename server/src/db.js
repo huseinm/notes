@@ -39,7 +39,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS notes (
     id TEXT PRIMARY KEY,
     folder_id TEXT,
-    title TEXT NOT NULL DEFAULT 'New Note',
+    title TEXT NOT NULL DEFAULT '',
     content TEXT NOT NULL DEFAULT '',
     plain_text TEXT NOT NULL DEFAULT '',
     is_pinned INTEGER DEFAULT 0,
@@ -66,7 +66,7 @@ if (folderCount === 0) {
     VALUES (?, ?, ?, ?, ?, ?)
   `).run(defaultFolderId, 'Notes', 'folder', 1, now, now);
 
-  const sampleContent = `<h1>Welcome to Apple Notes (Self-Hosted)</h1>
+  const sampleContent = `<h1>Welcome to Notes (Self-Hosted)</h1>
 <p>A lightweight, private, and beautiful notes app built for self-hosting on your NAS, server, or homelab.</p>
 <h2>✨ Key Features</h2>
 <ul data-type="taskList">
@@ -109,7 +109,7 @@ if (folderCount === 0) {
 <p></p>
 <p><em>Enjoy your clean, distraction-free writing!</em></p>`;
 
-  const plainText = `Welcome to Apple Notes (Self-Hosted)
+  const plainText = `Welcome to Notes (Self-Hosted)
 A lightweight, private, and beautiful notes app built for self-hosting on your NAS, server, or homelab.
 Key Features: Self-hosted with Docker, Fast instantaneous auto-saving, Pin important notes...`;
 
@@ -119,7 +119,7 @@ Key Features: Self-hosted with Docker, Fast instantaneous auto-saving, Pin impor
   `).run(
     'note-welcome',
     defaultFolderId,
-    'Welcome to Apple Notes (Self-Hosted)',
+    'Welcome to Notes (Self-Hosted)',
     sampleContent,
     plainText,
     1,

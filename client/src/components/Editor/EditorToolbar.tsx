@@ -132,13 +132,16 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
             <button
               onClick={() => setOpenMenu(openMenu === 'folder' ? null : 'folder')}
               title="Move to Folder"
-              className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs transition-colors ${
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-xs transition-colors ${
                 openMenu === 'folder'
                   ? 'bg-apple-lightHover dark:bg-apple-darkHover text-black dark:text-white'
                   : 'hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted'
               }`}
             >
-              <FolderIcon size={14} />
+              <FolderIcon size={14} className="text-apple-yellow" />
+              <span className="max-w-[110px] truncate hidden sm:inline">
+                {folders.find((f) => f.id === currentFolderId)?.name || 'Folder'}
+              </span>
               <ChevronDown size={11} />
             </button>
 

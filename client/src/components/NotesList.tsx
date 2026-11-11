@@ -6,7 +6,8 @@ import {
   Trash2, 
   ArrowUpDown, 
   FileText,
-  Plus
+  Plus,
+  Folder as FolderIcon
 } from 'lucide-react';
 import { Note, SortOption } from '../types';
 import { formatAppleDate } from '../utils/date';
@@ -23,6 +24,7 @@ interface NotesListProps {
   isTrashView: boolean;
   onEmptyTrash: () => void;
   folderTitle: string;
+  searchInputRef?: React.RefObject<HTMLInputElement>;
 }
 
 export const NotesList: React.FC<NotesListProps> = ({
@@ -36,7 +38,8 @@ export const NotesList: React.FC<NotesListProps> = ({
   onSortChange,
   isTrashView,
   onEmptyTrash,
-  folderTitle
+  folderTitle,
+  searchInputRef
 }) => {
   const pinnedNotes = notes.filter((n) => n.is_pinned === 1 && !isTrashView);
   const regularNotes = notes.filter((n) => n.is_pinned === 0 || isTrashView);
@@ -98,6 +101,13 @@ export const NotesList: React.FC<NotesListProps> = ({
             {excerpt}
           </span>
         </div>
+
+        {folderTitle === 'All Notes' && note.folder_name && (
+          <div className="mt-1.5 flex items-center gap-1 text-[11px] text-apple-lightMuted dark:text-apple-darkMuted opacity-80">
+            <FolderIcon size={11} className="flex-shrink-0" />
+            <span className="truncate">{note.folder_name}</span>
+          </div>
+        )}
       </button>
     );
   };
@@ -114,6 +124,7 @@ export const NotesList: React.FC<NotesListProps> = ({
               className="absolute left-2.5 top-1/2 -translate-y-1/2 text-apple-lightMuted dark:text-apple-darkMuted"
             />
             <input
+              ref={searchInputRef}
               type="text"
               placeholder={`Search all notes...`}
               value={searchQuery}

@@ -33,23 +33,34 @@ const upload = multer({
   }
 });
 
-router.post('/', upload.single('file'), (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+router.post('/', (req, res) => {
+  upload.single('file')(req, res, (err) => {
+    if (err) {
+      const status = err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
+      const message =
+        err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE'
+          ? 'File exceeds the 20MB maximum size limit'
+          : err.message;
+      return res.status(status).json({ error: message });
     }
 
-    const url = `/uploads/${req.file.filename}`;
-    res.json({
-      url,
-      filename: req.file.filename,
-      originalName: req.file.originalname,
-      size: req.file.size
-    });
-  } catch (error) {
-    console.error('File upload failed:', error);
-    res.status(500).json({ error: error.message });
-  }
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+
+      const url = `/uploads/${req.file.filename}`;
+      res.json({
+        url,
+        filename: req.file.filename,
+        originalName: req.file.originalname,
+        size: req.file.size
+      });
+    } catch (error) {
+      console.error('File upload failed:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
 });
 
 export default router;

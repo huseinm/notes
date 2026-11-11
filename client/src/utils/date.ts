@@ -34,3 +34,18 @@ export function formatAppleDate(timestamp: number): string {
   const year = String(date.getFullYear()).slice(-2);
   return `${month}/${day}/${year}`;
 }
+
+export function formatFullNoteTimestamp(timestamp: number): string {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  const datePart = date.toLocaleDateString([], {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+  const timePart = date.toLocaleTimeString([], {
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+  return `${datePart} at ${timePart}`;
+}

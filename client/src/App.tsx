@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { NotesList } from './components/NotesList';
@@ -29,6 +29,8 @@ export const App: React.FC = () => {
 
   const [notes, setNotes] = useState<Note[]>([]);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+  const selectedNoteIdRef = useRef<string | null>(null);
+  selectedNoteIdRef.current = selectedNoteId;
   const [activeNote, setActiveNote] = useState<Note | null>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,6 +41,7 @@ export const App: React.FC = () => {
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Sync theme with HTML class
   useEffect(() => {
@@ -77,12 +80,13 @@ export const App: React.FC = () => {
       setNotes(data);
 
       // Auto-select first note if none selected or if selected note is not in list
+      const currentSelectedId = selectedNoteIdRef.current;
       if (data.length > 0) {
-        if (!selectedNoteId || !data.some((n) => n.id === selectedNoteId)) {
+        if (!currentSelectedId || !data.some((n) => n.id === currentSelectedId)) {
           setSelectedNoteId(data[0].id);
           setActiveNote(data[0]);
         } else {
-          const current = data.find((n) => n.id === selectedNoteId);
+          const current = data.find((n) => n.id === currentSelectedId);
           if (current) setActiveNote(current);
         }
       } else {
@@ -92,7 +96,7 @@ export const App: React.FC = () => {
     } catch (err) {
       console.error('Failed to load notes:', err);
     }
-  }, [selectedView, selectedFolderId, searchQuery, sortOption, selectedNoteId]);
+  }, [selectedView, selectedFolderId, searchQuery, sortOption]);
 
   // Initial load
   useEffect(() => {
@@ -140,23 +144,75 @@ export const App: React.FC = () => {
     }
   };
 
-  // Handle updating active note (auto-save)
+  // Handle updating active note (auto-save & folder move)
   const handleUpdateNote = async (
     noteId: string,
     updates: Partial<Pick<Note, 'title' | 'content' | 'plain_text' | 'folder_id' | 'is_pinned'>>
   ) => {
     try {
       setSaveStatus('saving');
+
+      const isMovingFolder = updates.folder_id !== undefined;
+      const currentNote = activeNote?.id === noteId ? activeNote : notes.find((n) => n.id === noteId);
+      const oldFolderId = currentNote?.folder_id;
+
+      // Optimistic UI update when moving a note to another folder
+      if (isMovingFolder && oldFolderId !== updates.folder_id) {
+        const targetFolder = folders.find((f) => f.id === updates.folder_id);
+
+        // 1. Immediately update folder badge counts in the sidebar
+        setFolders((prev) =>
+          prev.map((f) => {
+            if (f.id === oldFolderId) {
+              return { ...f, note_count: Math.max(0, (f.note_count || 0) - 1) };
+            }
+            if (f.id === updates.folder_id) {
+              return { ...f, note_count: (f.note_count || 0) + 1 };
+            }
+            return f;
+          })
+        );
+
+        // 2. If viewing a specific folder and note was moved out of it, remove it immediately from list
+        if (selectedView === 'folder' && selectedFolderId && updates.folder_id !== selectedFolderId) {
+          const remaining = notes.filter((n) => n.id !== noteId);
+          setNotes(remaining);
+          if (selectedNoteId === noteId) {
+            const nextNote = remaining[0] || null;
+            setSelectedNoteId(nextNote ? nextNote.id : null);
+            setActiveNote(nextNote);
+          }
+        } else {
+          // In "All Notes" view, update folder_id and folder_name in-place without refreshing editor
+          const optimisticPatch = {
+            ...updates,
+            folder_name: targetFolder?.name
+          };
+          setActiveNote((prev) => (prev && prev.id === noteId ? { ...prev, ...optimisticPatch } : prev));
+          setNotes((prev) =>
+            prev.map((n) => (n.id === noteId ? { ...n, ...optimisticPatch } : n))
+          );
+        }
+      }
+
       const updated = await api.updateNote(noteId, updates);
-      setActiveNote(updated);
 
-      // Update in note list locally without reloading entire list for smoother UI
-      setNotes((prev) =>
-        prev.map((n) => (n.id === noteId ? { ...n, ...updated } : n))
-      );
+      // Only update activeNote/notes if the note wasn't moved out of the current folder view
+      const movedOutOfCurrentFolder =
+        isMovingFolder &&
+        selectedView === 'folder' &&
+        selectedFolderId &&
+        updates.folder_id !== selectedFolderId;
 
-      // Refresh folder counts if folder or state changed
-      if (updates.folder_id !== undefined) {
+      if (!movedOutOfCurrentFolder) {
+        setActiveNote((prev) => (prev && prev.id === noteId ? updated : prev));
+        setNotes((prev) =>
+          prev.map((n) => (n.id === noteId ? { ...n, ...updated } : n))
+        );
+      }
+
+      // Sync authoritative folder counts in background
+      if (isMovingFolder) {
         await loadFolders();
       }
       setSaveStatus('saved');
@@ -274,6 +330,11 @@ export const App: React.FC = () => {
       } else if (isCmdOrCtrl && e.key.toLowerCase() === 'n') {
         e.preventDefault();
         handleNewNote();
+      } else if (isCmdOrCtrl && e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        setMobilePane('list');
+        searchInputRef.current?.focus();
+        searchInputRef.current?.select();
       } else if (isCmdOrCtrl && e.key === '\\') {
         e.preventDefault();
         setIsSidebarOpen((prev) => !prev);
@@ -367,6 +428,7 @@ export const App: React.FC = () => {
             isTrashView={selectedView === 'trash'}
             onEmptyTrash={handleEmptyTrash}
             folderTitle={getFolderTitle()}
+            searchInputRef={searchInputRef}
           />
         </div>
 

@@ -13,6 +13,98 @@ import Image from '@tiptap/extension-image';
 import { Note, Folder } from '../../types';
 import { EditorToolbar } from './EditorToolbar';
 import { uploadImage } from '../../api';
+import { formatFullNoteTimestamp } from '../../utils/date';
+
+function htmlToMarkdown(html: string): string {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+
+  const serializeNode = (node: Node): string => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.textContent || '';
+    }
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+      return '';
+    }
+
+    const el = node as HTMLElement;
+    const tag = el.tagName.toLowerCase();
+    const children = Array.from(el.childNodes).map(serializeNode).join('');
+
+    switch (tag) {
+      case 'h1':
+        return `# ${children.trim()}\n\n`;
+      case 'h2':
+        return `## ${children.trim()}\n\n`;
+      case 'h3':
+        return `### ${children.trim()}\n\n`;
+      case 'p':
+        return children.trim() ? `${children.trim()}\n\n` : '\n';
+      case 'strong':
+      case 'b':
+        return `**${children}**`;
+      case 'em':
+      case 'i':
+        return `*${children}*`;
+      case 'u':
+        return `<u>${children}</u>`;
+      case 's':
+      case 'del':
+        return `~~${children}~~`;
+      case 'code':
+        return el.parentElement?.tagName.toLowerCase() === 'pre' ? children : `\`${children}\``;
+      case 'pre':
+        return `\`\`\`\n${el.textContent?.trim() || ''}\n\`\`\`\n\n`;
+      case 'blockquote':
+        return (
+          children
+            .trim()
+            .split('\n')
+            .map((line) => `> ${line}`)
+            .join('\n') + '\n\n'
+        );
+      case 'hr':
+        return `---\n\n`;
+      case 'br':
+        return '\n';
+      case 'img': {
+        const src = el.getAttribute('src') || '';
+        const alt = el.getAttribute('alt') || 'image';
+        return `![${alt}](${src})\n\n`;
+      }
+      case 'ul': {
+        const isTaskList = el.getAttribute('data-type') === 'taskList';
+        const items = Array.from(el.children)
+          .map((li) => {
+            if (isTaskList) {
+              const checked = li.getAttribute('data-checked') === 'true';
+              const text = (li as HTMLElement).innerText.trim();
+              return `- [${checked ? 'x' : ' '}] ${text}`;
+            }
+            return `- ${serializeNode(li).trim()}`;
+          })
+          .join('\n');
+        return `${items}\n\n`;
+      }
+      case 'ol': {
+        const items = Array.from(el.children)
+          .map((li, idx) => `${idx + 1}. ${serializeNode(li).trim()}`)
+          .join('\n');
+        return `${items}\n\n`;
+      }
+      case 'li':
+        return children.trim();
+      default:
+        return children;
+    }
+  };
+
+  return Array.from(doc.body.childNodes)
+    .map(serializeNode)
+    .join('')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
 
 interface TipTapEditorProps {
   note: Note;
@@ -45,6 +137,37 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
   noteIdRef.current = note.id;
   const titleInputRef = useRef<HTMLInputElement | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingSaveRef = useRef<{
+    noteId: string;
+    title: string;
+    content: string;
+    plain_text: string;
+  } | null>(null);
+  const onUpdateNoteRef = useRef(onUpdateNote);
+  onUpdateNoteRef.current = onUpdateNote;
+
+  // Flush any pending debounced save on unmount or tab close
+  useEffect(() => {
+    const flushPendingSave = () => {
+      if (saveTimeoutRef.current && pendingSaveRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+        saveTimeoutRef.current = null;
+        const pending = pendingSaveRef.current;
+        pendingSaveRef.current = null;
+        onUpdateNoteRef.current(pending.noteId, {
+          title: pending.title,
+          content: pending.content,
+          plain_text: pending.plain_text
+        });
+      }
+    };
+
+    window.addEventListener('beforeunload', flushPendingSave);
+    return () => {
+      window.removeEventListener('beforeunload', flushPendingSave);
+      flushPendingSave();
+    };
+  }, []);
 
   // Sync state ONLY when switching to a different note
   useEffect(() => {
@@ -159,13 +282,31 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
     }
+    pendingSaveRef.current = {
+      noteId: noteIdRef.current,
+      title: newTitle,
+      content: newContent,
+      plain_text: newPlainText
+    };
     saveTimeoutRef.current = setTimeout(() => {
-      onUpdateNote(noteIdRef.current, {
-        title: newTitle,
-        content: newContent,
-        plain_text: newPlainText
-      });
+      const pending = pendingSaveRef.current;
+      pendingSaveRef.current = null;
+      saveTimeoutRef.current = null;
+      if (pending) {
+        onUpdateNoteRef.current(pending.noteId, {
+          title: pending.title,
+          content: pending.content,
+          plain_text: pending.plain_text
+        });
+      }
     }, 350);
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      editor?.commands.focus('start');
+    }
   };
 
   const handleUploadImage = async (file: File) => {
@@ -180,7 +321,23 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
   };
 
   const handleMoveToFolder = (folderId: string) => {
-    onUpdateNote(note.id, { folder_id: folderId });
+    if (folderId === note.folder_id) return;
+
+    // If there are pending unsaved edits, include them in the same update and clear the timer
+    if (saveTimeoutRef.current && pendingSaveRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = null;
+      const pending = pendingSaveRef.current;
+      pendingSaveRef.current = null;
+      onUpdateNote(note.id, {
+        title: pending.title,
+        content: pending.content,
+        plain_text: pending.plain_text,
+        folder_id: folderId
+      });
+    } else {
+      onUpdateNote(note.id, { folder_id: folderId });
+    }
   };
 
   const handleExport = (format: 'markdown' | 'txt' | 'html' | 'print') => {
@@ -204,9 +361,9 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
     } else if (format === 'markdown') {
       mimeType = 'text/markdown';
       fileExt = '.md';
-      // Basic markdown conversion from html
-      const rawText = editor ? editor.getText() : note.plain_text;
-      contentToExport = `# ${exportHeading}\n\n${rawText}`;
+      const htmlContent = editor ? editor.getHTML() : note.content;
+      const mdBody = htmlToMarkdown(htmlContent);
+      contentToExport = title && title.trim() ? `# ${title.trim()}\n\n${mdBody}` : mdBody;
     } else {
       contentToExport = `${exportHeading}\n\n${editor ? editor.getText() : note.plain_text}`;
     }
@@ -240,8 +397,22 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
 
       {/* Editor Body Area */}
       <div className="flex-1 overflow-y-auto max-w-4xl w-full mx-auto flex flex-col">
+        {/* Centered Timestamp & Word Count Header (Apple Notes style) */}
+        <div className="pt-4 pb-1 px-8 text-center text-[11px] text-apple-lightMuted dark:text-apple-darkMuted select-none">
+          <span>{formatFullNoteTimestamp(note.updated_at)}</span>
+          {(() => {
+            const raw = ((title ? title + ' ' : '') + (editor ? editor.getText() : note.plain_text)).trim();
+            const wordCount = raw ? raw.split(/\s+/).length : 0;
+            return wordCount > 0 ? (
+              <span className="ml-2 opacity-75">
+                · {wordCount} {wordCount === 1 ? 'word' : 'words'}
+              </span>
+            ) : null;
+          })()}
+        </div>
+
         {/* Title Input */}
-        <div className="px-8 pt-8 pb-2">
+        <div className="px-8 pt-3 pb-2">
           <input
             ref={titleInputRef}
             type="text"
@@ -249,6 +420,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
             placeholder="Title"
             value={title}
             onChange={handleTitleChange}
+            onKeyDown={handleTitleKeyDown}
             className="w-full text-2xl sm:text-3xl font-bold bg-transparent outline-none border-none placeholder:text-apple-lightMuted/60 dark:placeholder:text-apple-darkMuted/60 text-apple-lightText dark:text-white tracking-tight"
           />
         </div>

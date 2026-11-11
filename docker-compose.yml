@@ -1,10 +1,10 @@
 services:
-  apple-notes:
+  notes:
     build:
       context: .
       dockerfile: Dockerfile
-    image: apple-notes:latest
-    container_name: apple-notes
+    image: notes-self-hosted:latest
+    container_name: notes
     restart: unless-stopped
     ports:
       - "3000:3000"

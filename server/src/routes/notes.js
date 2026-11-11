@@ -59,7 +59,7 @@ router.get('/', (req, res) => {
         query += `, n.created_at ASC`;
         break;
       case 'title_asc':
-        query += `, LOWER(n.title) ASC`;
+        query += `, LOWER(COALESCE(NULLIF(TRIM(n.title), ''), TRIM(n.plain_text))) ASC`;
         break;
       case 'updated_desc':
       default:
