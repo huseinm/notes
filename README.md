@@ -1,14 +1,14 @@
 # 📝 Notes — Lightweight Self-Hosted Notes App
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![Docker](https://img.shields.io/badge/Docker-ghcr.io%2Fhuseinm%2Fnotes-2496ED?logo=docker&logoColor=white)](https://github.com/huseinm/notes/pkgs/container/notes)
 [![SQLite](https://img.shields.io/badge/Database-SQLite%20WAL-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-22-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 
-A lightweight, private, and distraction-free self-hosted web application inspired by **Apple Notes** and **iCloud Notes**. Built with a clean macOS dark/light aesthetic, buttery-smooth rich text editing, and a zero-maintenance single-container architecture.
+A lightweight, private, and distraction-free self-hosted notes web application. Built with a clean dark/light aesthetic, buttery-smooth rich text editing, and a zero-maintenance single-container architecture.
 
-Runs effortlessly in a single lightweight Docker container (~50MB RAM) on your **Synology NAS**, **Unraid**, **TrueNAS**, **Raspberry Pi**, or any Linux server / VPS.
+Runs effortlessly in a single lightweight Docker container (~50MB RAM) on your **QNAP NAS**, **Synology NAS**, **Unraid**, **TrueNAS**, **Raspberry Pi**, or any Linux server / VPS.
 
 ---
 
@@ -28,7 +28,7 @@ Runs effortlessly in a single lightweight Docker container (~50MB RAM) on your *
 - **🖼️ Images & Attachments**: Paste images directly from your clipboard (`Cmd/Ctrl + V`), drag & drop images into the editor, or upload via the toolbar (up to 20MB per image).
 - **💾 Zero-Loss Instant Auto-Save**: Debounced background persistence with immediate flush when switching notes or closing the browser tab, paired with a live save status indicator (`Saved` / `Saving...`).
 - **📌 Pinned Notes & Sorting**: Pin important notes to the top of any folder, and sort notes by **Date Modified**, **Date Created**, or **Title**.
-- **📁 Folder Organization & Trash**: Organize notes into custom folders, browse **All Notes**, move notes between folders, or recover deleted notes from **Recently Deleted** (Trash).
+- **📁 Folder Organization & Trash**: Organize notes into custom folders, browse **All Notes**, move notes between folders instantaneously, or recover deleted notes from **Recently Deleted** (Trash).
 - **🔍 Instant Full-Text Search**: Real-time search (`Cmd/Ctrl + F`) matching both note titles and full body content.
 - **📤 Rich Export & Full Database Backups**:
   - Export individual notes to **Markdown (`.md`)** (preserving headings, formatting, checklists `- [x]`, code blocks, and images), **HTML (`.html`)**, **Plain Text (`.txt`)**, or **Print / Save as PDF**.
@@ -40,17 +40,14 @@ Runs effortlessly in a single lightweight Docker container (~50MB RAM) on your *
 
 ## 🚀 Quick Start with Docker
 
-### Option 1: Docker Compose (Recommended)
+### Option 1: Pull Pre-Built Image from GitHub Container Registry (`ghcr.io`)
 
-1. Clone this repository or copy [`docker-compose.yml`](docker-compose.yml):
+Create a `docker-compose.yml` file anywhere on your machine or NAS:
 
 ```yaml
 services:
   notes:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: notes-self-hosted:latest
+    image: ghcr.io/huseinm/notes:latest
     container_name: notes
     restart: unless-stopped
     ports:
@@ -64,39 +61,67 @@ services:
       - DATA_DIR=/app/data
 ```
 
-2. Build and start the container in the background:
+Start the container:
 
 ```bash
-docker compose up --build -d
+docker compose up -d
 ```
 
-3. Open your browser and navigate to:
+Open your browser at:
 ```text
 http://localhost:3000
 ```
-*(or your NAS/server IP, e.g. `http://192.168.1.100:3000`)*
+
+### Option 2: Build from Source with Docker Compose
+
+```bash
+git clone https://github.com/huseinm/notes.git
+cd notes
+docker compose up --build -d
+```
 
 ---
 
 ## 🖥️ NAS & Homelab Setup Guides
 
+### QNAP NAS (Container Station)
+1. Open **Container Station** on QTS / QuTS hero.
+2. Go to **Applications** → click **Create**.
+3. Set **Application name** to `notes` and paste the following YAML:
+   ```yaml
+   services:
+     notes:
+       image: ghcr.io/huseinm/notes:latest
+       container_name: notes
+       restart: unless-stopped
+       ports:
+         - "3000:3000"
+       volumes:
+         - /share/Container/notes/data:/app/data
+       environment:
+         - NODE_ENV=production
+         - PORT=3000
+   ```
+4. Click **Validate** and **Create**. Access your notes at `http://<QNAP-IP>:3000`.
+
 ### Synology NAS (Container Manager)
 1. Open **Container Manager** on DSM.
 2. Go to **Project** → click **Create**.
-3. Set Project Name to `notes`, select a path (e.g., `/docker/notes`), and upload or build from this repository.
+3. Set Project Name to `notes`, select a path (e.g., `/docker/notes`), and paste the `docker-compose.yml` above using `image: ghcr.io/huseinm/notes:latest`.
 4. Ensure `/docker/notes/data` is mapped to `/app/data`.
 5. Click **Next** and **Done**. Access via `http://<SYNOLOGY-IP>:3000`.
 
 ### Unraid
-1. Build the image or pull it to your Unraid server, then go to **Docker** → **Add Container**.
+1. In the Unraid **Docker** tab, click **Add Container**.
 2. **Name**: `notes`
-3. **Port**: Host `3000` → Container `3000`
-4. **Path**: Host `/mnt/user/appdata/notes` → Container `/app/data`
-5. Click **Apply**.
+3. **Repository**: `ghcr.io/huseinm/notes:latest`
+4. **Port**: Host `3000` → Container `3000`
+5. **Path**: Host `/mnt/user/appdata/notes` → Container `/app/data`
+6. Click **Apply**.
 
 ### TrueNAS Scale
 1. Go to **Apps** → **Discover Apps** → **Custom App**.
-2. Set the image repository and tag (`apple-notes-self-hosted:latest`).
+2. Set the image repository and tag (`ghcr.io/huseinm/notes:latest`).
 3. Forward port `3000` → `3000`.
 4. Add a Host Path Volume mounting your dataset path to `/app/data`.
 
@@ -105,7 +130,7 @@ A built-in health check endpoint is available for Docker healthchecks, Nginx Pro
 ```http
 GET /api/health
 ```
-Returns `200 OK` with `{ "status": "ok", "version": "1.0.0", "timestamp": "..." }`.
+Returns `200 OK` with `{ "status": "ok", "app": "Notes Self-Hosted", "version": "1.0.0", "timestamp": "..." }`.
 
 ---
 
@@ -147,7 +172,7 @@ npm start
 │   │   │   ├── Header.tsx      # Top bar (sidebar toggle, save status, theme toggle)
 │   │   │   ├── Sidebar.tsx     # Folders navigation, inline creation, tabular counts
 │   │   │   └── NotesList.tsx   # Search, sorting, Pinned & Notes cards
-│   │   ├── utils/date.ts       # Apple Notes relative & full timestamp formatters
+│   │   ├── utils/date.ts       # Relative & full timestamp formatters
 │   │   ├── api.ts              # Typed REST client
 │   │   ├── App.tsx             # 3-pane layout & global keyboard shortcuts
 │   │   └── index.css           # ProseMirror typography, circular checklists, scrollbars
@@ -179,8 +204,8 @@ All application state lives inside `./data` (mapped to `/app/data` in Docker):
 ```
 
 ### How to Back Up
-1. **Filesystem / NAS Backup**: Include `./data` in your automated NAS backup jobs (Synology Hyper Backup, Restic, Borg, Kopia, etc.).
-2. **In-App JSON Backup**: Click the **Settings (gear icon)** in the top-right header → **Download Backup (.json)**. You can restore from any `.json` backup file using **Restore from Backup File**.
+1. **Filesystem / NAS Backup**: Include `./data` in your automated NAS backup jobs (QNAP Hybrid Backup Sync, Synology Hyper Backup, Restic, Borg, Kopia, etc.).
+2. **In-App JSON Backup**: Click the **Settings (gear icon)** in the top-right header → **Export Backup**. You can restore from any `.json` backup file using **Restore Backup**.
 
 ---
 
@@ -214,8 +239,6 @@ All application state lives inside `./data` (mapped to `/app/data` in Docker):
 
 ---
 
-## 📄 License & Disclaimer
+## 📄 License
 
 Licensed under the [MIT License](LICENSE). Free for personal and commercial use, self-hosting, modification, and distribution.
-
-*Disclaimer: This project is an independent open-source application and is not affiliated with, endorsed by, or sponsored by Apple Inc. Any references to Apple Notes or iCloud Notes are strictly for descriptive comparison.*
