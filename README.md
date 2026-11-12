@@ -6,7 +6,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-22-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 
-A lightweight, private, and distraction-free self-hosted notes web application inspired by **Apple Notes** and **iCloud Notes**. Built with a clean dark/light aesthetic, buttery-smooth rich text editing, and a zero-maintenance single-container architecture.
+A lightweight, private, and distraction-free self-hosted notes web application inspired by **Apple Notes**. Built with a clean dark/light aesthetic, buttery-smooth rich text editing, and a zero-maintenance single-container architecture.
 
 Runs effortlessly in a single lightweight Docker container (~50MB RAM) on your **QNAP NAS**, **Synology NAS**, **Unraid**, **TrueNAS**, **Raspberry Pi**, or any Linux server / VPS.
 
@@ -238,6 +238,8 @@ All application state lives inside `./data` (mapped to `/app/data` in Docker):
 | `NODE_ENV` | `production` | Runtime environment (`development` or `production`) |
 
 ---
+
+Apple Notes and iCloud are trademarks of Apple Inc. This project is not affiliated with or endorsed by Apple Inc.
 
 ## 📄 License
 
