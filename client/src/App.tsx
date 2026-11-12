@@ -13,7 +13,7 @@ import { ChevronLeft, FileText, SquarePen } from 'lucide-react';
 export const App: React.FC = () => {
   // Theme state: default to dark as shown in user screenshot
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    const saved = localStorage.getItem('apple_notes_theme');
+    const saved = localStorage.getItem('notes_theme');
     return saved !== null ? saved === 'dark' : true;
   });
 
@@ -52,7 +52,7 @@ export const App: React.FC = () => {
       document.documentElement.classList.remove('dark');
       document.documentElement.classList.add('light');
     }
-    localStorage.setItem('apple_notes_theme', isDarkMode ? 'dark' : 'light');
+    localStorage.setItem('notes_theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 
   // Load folders
@@ -357,7 +357,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-apple-lightBg dark:bg-apple-darkBg font-sans text-apple-lightText dark:text-apple-darkText transition-colors">
+    <div className="h-screen w-screen flex flex-col overflow-hidden bg-notes-lightBg dark:bg-notes-darkBg font-sans text-notes-lightText dark:text-notes-darkText transition-colors">
       {/* Top Header */}
       <Header
         isSidebarOpen={isSidebarOpen}
@@ -376,7 +376,7 @@ export const App: React.FC = () => {
           {mobilePane !== 'sidebar' && (
             <button
               onClick={() => setMobilePane(mobilePane === 'editor' ? 'list' : 'sidebar')}
-              className="p-1.5 rounded-lg bg-black/60 backdrop-blur-md text-apple-yellow flex items-center text-xs gap-1"
+              className="p-1.5 rounded-lg bg-black/60 backdrop-blur-md text-notes-yellow flex items-center text-xs gap-1"
             >
               <ChevronLeft size={16} />
               <span>{mobilePane === 'editor' ? 'Notes' : 'Folders'}</span>
@@ -451,7 +451,7 @@ export const App: React.FC = () => {
               onNewNote={handleNewNote}
             />
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-apple-lightMuted dark:text-apple-darkMuted">
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-notes-lightMuted dark:text-notes-darkMuted">
               <FileText size={48} className="mb-3 opacity-30 stroke-[1.2]" />
               <h2 className="text-lg font-semibold mb-1">No Note Selected</h2>
               <p className="text-xs max-w-xs opacity-75 mb-4">
@@ -460,7 +460,7 @@ export const App: React.FC = () => {
               {selectedView !== 'trash' && (
                 <button
                   onClick={handleNewNote}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-apple-yellow hover:bg-apple-yellowHover text-black font-semibold text-xs shadow-sm transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-notes-yellow hover:bg-notes-yellowHover text-black font-semibold text-xs shadow-sm transition-colors"
                 >
                   <SquarePen size={15} />
                   <span>Create Note</span>

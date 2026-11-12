@@ -69,7 +69,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside className="w-64 flex-shrink-0 border-r border-apple-lightBorder dark:border-apple-darkBorder bg-apple-lightSidebar dark:bg-apple-darkSidebar flex flex-col h-[calc(100vh-3rem)] select-none transition-colors">
+    <aside className="w-64 flex-shrink-0 border-r border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightSidebar dark:bg-notes-darkSidebar flex flex-col h-[calc(100vh-3rem)] select-none transition-colors">
       {/* Folder Section List */}
       <div className="flex-1 overflow-y-auto px-2 py-3 space-y-1">
         {/* All Notes */}
@@ -77,21 +77,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => onSelectView('all', null)}
           className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
             selectedView === 'all'
-              ? 'bg-apple-lightActive dark:bg-apple-darkActive text-apple-lightText dark:text-white font-semibold shadow-xs'
-              : 'text-apple-lightText/80 dark:text-apple-darkText/80 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover'
+              ? 'bg-notes-lightActive dark:bg-notes-darkActive text-notes-lightText dark:text-white font-semibold shadow-xs'
+              : 'text-notes-lightText/80 dark:text-notes-darkText/80 hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'
           }`}
         >
           <div className="flex items-center gap-2.5 truncate flex-1 min-w-0 pr-2">
-            <Layers size={17} className="text-apple-yellow flex-shrink-0" />
+            <Layers size={17} className="text-notes-yellow flex-shrink-0" />
             <span className="truncate">All Notes</span>
           </div>
-          <span className="text-xs text-apple-lightMuted dark:text-apple-darkMuted font-normal px-1.5 py-0.5 rounded-full bg-black/5 dark:bg-black/20 min-w-[22px] text-center tabular-nums flex-shrink-0">
+          <span className="text-xs text-notes-lightMuted dark:text-notes-darkMuted font-normal px-1.5 py-0.5 rounded-full bg-black/5 dark:bg-black/20 min-w-[22px] text-center tabular-nums flex-shrink-0">
             {stats.all}
           </span>
         </button>
 
         {/* Separator / Header */}
-        <div className="pt-3 pb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-apple-lightMuted dark:text-apple-darkMuted">
+        <div className="pt-3 pb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-notes-lightMuted dark:text-notes-darkMuted">
           Folders
         </div>
 
@@ -116,15 +116,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 }}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isSelected
-                    ? 'bg-apple-lightActive dark:bg-apple-darkActive text-apple-lightText dark:text-white font-semibold shadow-xs'
-                    : 'text-apple-lightText/80 dark:text-apple-darkText/80 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover'
+                    ? 'bg-notes-lightActive dark:bg-notes-darkActive text-notes-lightText dark:text-white font-semibold shadow-xs'
+                    : 'text-notes-lightText/80 dark:text-notes-darkText/80 hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'
                 }`}
               >
                 <div className="flex items-center gap-2.5 truncate flex-1 min-w-0 pr-2">
                   {isSelected ? (
-                    <FolderOpen size={17} className="text-apple-yellow flex-shrink-0" />
+                    <FolderOpen size={17} className="text-notes-yellow flex-shrink-0" />
                   ) : (
-                    <FolderIcon size={17} className="text-apple-yellow flex-shrink-0" />
+                    <FolderIcon size={17} className="text-notes-yellow flex-shrink-0" />
                   )}
                   <span className="truncate">{folder.name}</span>
                 </div>
@@ -138,7 +138,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         e.stopPropagation();
                         setMenuFolderId(isMenuOpen ? null : folder.id);
                       }}
-                      className={`p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-apple-lightMuted dark:text-apple-darkMuted transition-opacity ${
+                      className={`p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-notes-lightMuted dark:text-notes-darkMuted transition-opacity ${
                         isMenuOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                       }`}
                       title="Folder options"
@@ -147,7 +147,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     </button>
                   )}
 
-                  <span className="text-xs text-apple-lightMuted dark:text-apple-darkMuted font-normal px-1.5 py-0.5 rounded-full bg-black/5 dark:bg-black/20 min-w-[22px] text-center tabular-nums">
+                  <span className="text-xs text-notes-lightMuted dark:text-notes-darkMuted font-normal px-1.5 py-0.5 rounded-full bg-black/5 dark:bg-black/20 min-w-[22px] text-center tabular-nums">
                     {folder.note_count}
                   </span>
                 </div>
@@ -156,14 +156,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Context Dropdown */}
               {isMenuOpen && (
                 <div
-                  className="absolute right-2 top-9 z-30 w-36 py-1 bg-white dark:bg-[#252528] border border-apple-lightBorder dark:border-apple-darkBorder rounded-lg shadow-xl text-xs"
+                  className="absolute right-2 top-9 z-30 w-36 py-1 bg-white dark:bg-[#252528] border border-notes-lightBorder dark:border-notes-darkBorder rounded-lg shadow-xl text-xs"
                 >
                   <button
                     onClick={() => {
                       setMenuFolderId(null);
                       onRenameFolder(folder);
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightText dark:text-apple-darkText"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightText dark:text-notes-darkText"
                   >
                     <Edit2 size={13} />
                     Rename
@@ -190,15 +190,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
             onClick={() => onSelectView('trash', null)}
             className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
               selectedView === 'trash'
-                ? 'bg-apple-lightActive dark:bg-apple-darkActive text-apple-lightText dark:text-white font-semibold shadow-xs'
-                : 'text-apple-lightText/80 dark:text-apple-darkText/80 hover:bg-apple-lightHover dark:hover:bg-apple-darkHover'
+                ? 'bg-notes-lightActive dark:bg-notes-darkActive text-notes-lightText dark:text-white font-semibold shadow-xs'
+                : 'text-notes-lightText/80 dark:text-notes-darkText/80 hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'
             }`}
           >
             <div className="flex items-center gap-2.5 truncate flex-1 min-w-0 pr-2">
-              <Trash2 size={17} className="text-apple-lightMuted dark:text-apple-darkMuted flex-shrink-0" />
+              <Trash2 size={17} className="text-notes-lightMuted dark:text-notes-darkMuted flex-shrink-0" />
               <span className="truncate">Recently Deleted</span>
             </div>
-            <span className="text-xs text-apple-lightMuted dark:text-apple-darkMuted font-normal px-1.5 py-0.5 rounded-full bg-black/5 dark:bg-black/20 min-w-[22px] text-center tabular-nums flex-shrink-0">
+            <span className="text-xs text-notes-lightMuted dark:text-notes-darkMuted font-normal px-1.5 py-0.5 rounded-full bg-black/5 dark:bg-black/20 min-w-[22px] text-center tabular-nums flex-shrink-0">
               {stats.trash}
             </span>
           </button>
@@ -206,7 +206,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Footer: Create Folder Form / Button */}
-      <div className="p-2 border-t border-apple-lightBorder dark:border-apple-darkBorder">
+      <div className="p-2 border-t border-notes-lightBorder dark:border-notes-darkBorder">
         {isCreating ? (
           <form onSubmit={handleCreateSubmit} className="space-y-1.5">
             <input
@@ -215,7 +215,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               placeholder="New folder name..."
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
-              className="w-full text-xs px-2.5 py-1.5 rounded-md bg-white dark:bg-black/30 border border-apple-lightBorder dark:border-apple-darkBorder outline-none focus:border-apple-yellow text-apple-lightText dark:text-white"
+              className="w-full text-xs px-2.5 py-1.5 rounded-md bg-white dark:bg-black/30 border border-notes-lightBorder dark:border-notes-darkBorder outline-none focus:border-notes-yellow text-notes-lightText dark:text-white"
             />
             <div className="flex items-center justify-end gap-1.5">
               <button
@@ -224,13 +224,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   setIsCreating(false);
                   setNewFolderName('');
                 }}
-                className="text-[11px] px-2 py-1 rounded text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white"
+                className="text-[11px] px-2 py-1 rounded text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="text-[11px] px-2.5 py-1 rounded bg-apple-yellow hover:bg-apple-yellowHover text-black font-medium transition-colors"
+                className="text-[11px] px-2.5 py-1 rounded bg-notes-yellow hover:bg-notes-yellowHover text-black font-medium transition-colors"
               >
                 Create
               </button>
@@ -239,7 +239,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ) : (
           <button
             onClick={() => setIsCreating(true)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-amber-600 dark:text-apple-yellow hover:bg-apple-lightHover dark:hover:bg-apple-darkHover transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-amber-600 dark:text-notes-yellow hover:bg-notes-lightHover dark:hover:bg-notes-darkHover transition-colors"
           >
             <FolderPlus size={16} />
             <span>New Folder</span>

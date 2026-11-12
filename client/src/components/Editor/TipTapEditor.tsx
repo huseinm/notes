@@ -206,7 +206,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
     editable: !isTrashView,
     editorProps: {
       attributes: {
-        class: 'focus:outline-none min-h-[400px] px-8 py-4 text-apple-lightText dark:text-apple-darkText'
+        class: 'focus:outline-none min-h-[400px] px-8 py-4 text-notes-lightText dark:text-notes-darkText'
       },
       handlePaste: (view, event) => {
         const items = event.clipboardData?.items;
@@ -378,7 +378,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-3rem)] overflow-hidden bg-apple-lightBg dark:bg-apple-darkBg text-apple-lightText dark:text-apple-darkText transition-colors">
+    <div className="flex-1 flex flex-col h-[calc(100vh-3rem)] overflow-hidden bg-notes-lightBg dark:bg-notes-darkBg text-notes-lightText dark:text-notes-darkText transition-colors">
       {/* Top Toolbar */}
       <EditorToolbar
         editor={editor}
@@ -397,8 +397,8 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
 
       {/* Editor Body Area */}
       <div className="flex-1 overflow-y-auto max-w-4xl w-full mx-auto flex flex-col">
-        {/* Centered Timestamp & Word Count Header (Apple Notes style) */}
-        <div className="pt-4 pb-1 px-8 text-center text-[11px] text-apple-lightMuted dark:text-apple-darkMuted select-none">
+        {/* Centered Timestamp & Word Count Header */}
+        <div className="pt-4 pb-1 px-8 text-center text-[11px] text-notes-lightMuted dark:text-notes-darkMuted select-none">
           <span>{formatFullNoteTimestamp(note.updated_at)}</span>
           {(() => {
             const raw = ((title ? title + ' ' : '') + (editor ? editor.getText() : note.plain_text)).trim();
@@ -421,7 +421,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
             value={title}
             onChange={handleTitleChange}
             onKeyDown={handleTitleKeyDown}
-            className="w-full text-2xl sm:text-3xl font-bold bg-transparent outline-none border-none placeholder:text-apple-lightMuted/60 dark:placeholder:text-apple-darkMuted/60 text-apple-lightText dark:text-white tracking-tight"
+            className="w-full text-2xl sm:text-3xl font-bold bg-transparent outline-none border-none placeholder:text-notes-lightMuted/60 dark:placeholder:text-notes-darkMuted/60 text-notes-lightText dark:text-white tracking-tight"
           />
         </div>
 

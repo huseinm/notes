@@ -116,7 +116,7 @@
   color: #e5a93c;
 }
 
-/* Task list / Checklist styling like Apple Notes */
+/* Task list / Checklist styling */
 ul[data-type="taskList"] {
   list-style: none;
   padding: 0;

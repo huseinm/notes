@@ -30,12 +30,12 @@ export const Header: React.FC<HeaderProps> = ({
   saveStatus
 }) => {
   return (
-    <header className="h-12 border-b border-apple-lightBorder dark:border-apple-darkBorder bg-apple-lightSidebar dark:bg-apple-darkSidebar flex items-center justify-between px-3.5 z-20 select-none transition-colors">
+    <header className="h-12 border-b border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightSidebar dark:bg-notes-darkSidebar flex items-center justify-between px-3.5 z-20 select-none transition-colors">
       <div className="flex items-center gap-2.5">
         <button
           onClick={onToggleSidebar}
           title={isSidebarOpen ? "Collapse folders (Cmd+\\)" : "Expand folders (Cmd+\\)"}
-          className="p-1.5 rounded-md hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
+          className="p-1.5 rounded-md hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white transition-colors"
         >
           {isSidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
         </button>
@@ -45,20 +45,20 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#f8d068] via-[#e5a93c] to-[#c48920] flex items-center justify-center shadow-xs text-black">
             <NotebookPen size={13} strokeWidth={2.3} />
           </div>
-          <span className="font-semibold text-sm tracking-tight text-apple-lightText dark:text-apple-darkText">
+          <span className="font-semibold text-sm tracking-tight text-notes-lightText dark:text-notes-darkText">
             Notes
           </span>
-          <span className="hidden sm:inline-block text-[11px] font-medium px-2 py-0.5 rounded-full bg-apple-yellow/15 text-amber-700 dark:text-apple-yellow">
+          <span className="hidden sm:inline-block text-[11px] font-medium px-2 py-0.5 rounded-full bg-notes-yellow/15 text-amber-700 dark:text-notes-yellow">
             Self-Hosted
           </span>
         </div>
       </div>
 
       {/* Center status indicator */}
-      <div className="flex items-center text-xs text-apple-lightMuted dark:text-apple-darkMuted">
+      <div className="flex items-center text-xs text-notes-lightMuted dark:text-notes-darkMuted">
         {saveStatus === 'saving' && (
-          <span className="flex items-center gap-1.5 animate-pulse text-amber-600 dark:text-apple-yellow">
-            <span className="w-2 h-2 rounded-full bg-apple-yellow"></span>
+          <span className="flex items-center gap-1.5 animate-pulse text-amber-600 dark:text-notes-yellow">
+            <span className="w-2 h-2 rounded-full bg-notes-yellow"></span>
             Saving...
           </span>
         )}
@@ -78,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onOpenShortcuts}
           title="Keyboard Shortcuts (Cmd+/)"
-          className="p-1.5 rounded-md hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
+          className="p-1.5 rounded-md hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white transition-colors"
         >
           <Keyboard size={17} />
         </button>
@@ -86,7 +86,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onToggleTheme}
           title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          className="p-1.5 rounded-md hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
+          className="p-1.5 rounded-md hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white transition-colors"
         >
           {isDarkMode ? <Sun size={17} /> : <Moon size={17} />}
         </button>
@@ -94,7 +94,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onOpenSettings}
           title="Settings, Backups & Storage"
-          className="p-1.5 rounded-md hover:bg-apple-lightHover dark:hover:bg-apple-darkHover text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
+          className="p-1.5 rounded-md hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white transition-colors"
         >
           <Database size={17} />
         </button>

@@ -10,7 +10,7 @@ import {
   Folder as FolderIcon
 } from 'lucide-react';
 import { Note, SortOption } from '../types';
-import { formatAppleDate } from '../utils/date';
+import { formatNoteDate } from '../utils/date';
 
 interface NotesListProps {
   notes: Note[];
@@ -46,9 +46,9 @@ export const NotesList: React.FC<NotesListProps> = ({
 
   const renderNoteCard = (note: Note) => {
     const isSelected = note.id === selectedNoteId;
-    const formattedDate = formatAppleDate(note.updated_at);
+    const formattedDate = formatNoteDate(note.updated_at);
 
-    // Dynamic title determination like native Apple Notes:
+    // Dynamic title determination:
     // 1. If explicit title is set, use it
     // 2. Otherwise extract first non-empty line of content
     // 3. If note is completely empty, display "New Note" in placeholder style
@@ -76,8 +76,8 @@ export const NotesList: React.FC<NotesListProps> = ({
         onClick={() => onSelectNote(note.id)}
         className={`w-full text-left p-3 rounded-xl transition-all mb-1 select-none flex flex-col justify-between ${
           isSelected
-            ? 'bg-apple-lightActive dark:bg-apple-darkActive text-apple-lightText dark:text-white shadow-xs ring-1 ring-black/5 dark:ring-white/10'
-            : 'hover:bg-apple-lightHover/70 dark:hover:bg-apple-darkHover/60 text-apple-lightText/90 dark:text-apple-darkText/90'
+            ? 'bg-notes-lightActive dark:bg-notes-darkActive text-notes-lightText dark:text-white shadow-xs ring-1 ring-black/5 dark:ring-white/10'
+            : 'hover:bg-notes-lightHover/70 dark:hover:bg-notes-darkHover/60 text-notes-lightText/90 dark:text-notes-darkText/90'
         }`}
       >
         <div className="flex items-start justify-between gap-2">
@@ -89,21 +89,21 @@ export const NotesList: React.FC<NotesListProps> = ({
             {displayTitle}
           </h3>
           {note.is_pinned === 1 && !isTrashView && (
-            <Pin size={12} className="text-apple-yellow flex-shrink-0 mt-0.5 fill-apple-yellow" />
+            <Pin size={12} className="text-notes-yellow flex-shrink-0 mt-0.5 fill-notes-yellow" />
           )}
         </div>
 
         <div className="mt-1 flex items-baseline gap-2 text-xs">
-          <span className="font-medium text-apple-lightMuted dark:text-apple-darkMuted flex-shrink-0">
+          <span className="font-medium text-notes-lightMuted dark:text-notes-darkMuted flex-shrink-0">
             {formattedDate}
           </span>
-          <span className="truncate opacity-75 text-apple-lightMuted dark:text-apple-darkMuted">
+          <span className="truncate opacity-75 text-notes-lightMuted dark:text-notes-darkMuted">
             {excerpt}
           </span>
         </div>
 
         {folderTitle === 'All Notes' && note.folder_name && (
-          <div className="mt-1.5 flex items-center gap-1 text-[11px] text-apple-lightMuted dark:text-apple-darkMuted opacity-80">
+          <div className="mt-1.5 flex items-center gap-1 text-[11px] text-notes-lightMuted dark:text-notes-darkMuted opacity-80">
             <FolderIcon size={11} className="flex-shrink-0" />
             <span className="truncate">{note.folder_name}</span>
           </div>
@@ -113,15 +113,15 @@ export const NotesList: React.FC<NotesListProps> = ({
   };
 
   return (
-    <div className="w-80 flex-shrink-0 border-r border-apple-lightBorder dark:border-apple-darkBorder bg-apple-lightPanel dark:bg-[#202023] flex flex-col h-[calc(100vh-3rem)] transition-colors">
+    <div className="w-80 flex-shrink-0 border-r border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightPanel dark:bg-[#202023] flex flex-col h-[calc(100vh-3rem)] transition-colors">
       {/* Top Bar: Search and Sort */}
-      <div className="p-3 pb-2 border-b border-apple-lightBorder dark:border-apple-darkBorder/60 space-y-2">
+      <div className="p-3 pb-2 border-b border-notes-lightBorder dark:border-notes-darkBorder/60 space-y-2">
         <div className="flex items-center gap-2">
           {/* Search Box */}
           <div className="relative flex-1">
             <Search
               size={15}
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-apple-lightMuted dark:text-apple-darkMuted"
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-notes-lightMuted dark:text-notes-darkMuted"
             />
             <input
               ref={searchInputRef}
@@ -129,12 +129,12 @@ export const NotesList: React.FC<NotesListProps> = ({
               placeholder={`Search all notes...`}
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full text-xs pl-8 pr-7 py-1.5 rounded-lg bg-black/5 dark:bg-black/30 border border-apple-lightBorder dark:border-apple-darkBorder/60 outline-none focus:border-apple-yellow text-apple-lightText dark:text-white placeholder:text-apple-lightMuted dark:placeholder:text-apple-darkMuted"
+              className="w-full text-xs pl-8 pr-7 py-1.5 rounded-lg bg-black/5 dark:bg-black/30 border border-notes-lightBorder dark:border-notes-darkBorder/60 outline-none focus:border-notes-yellow text-notes-lightText dark:text-white placeholder:text-notes-lightMuted dark:placeholder:text-notes-darkMuted"
             />
             {searchQuery && (
               <button
                 onClick={() => onSearchChange('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white"
               >
                 <X size={14} />
               </button>
@@ -146,7 +146,7 @@ export const NotesList: React.FC<NotesListProps> = ({
             <button
               onClick={onNewNote}
               title="New Note (Cmd+N)"
-              className="p-1.5 rounded-lg bg-apple-yellow/20 hover:bg-apple-yellow text-amber-700 dark:text-apple-yellow hover:text-black transition-colors"
+              className="p-1.5 rounded-lg bg-notes-yellow/20 hover:bg-notes-yellow text-amber-700 dark:text-notes-yellow hover:text-black transition-colors"
             >
               <Plus size={16} />
             </button>
@@ -154,7 +154,7 @@ export const NotesList: React.FC<NotesListProps> = ({
         </div>
 
         {/* Subhead / Sort and count */}
-        <div className="flex items-center justify-between text-[11px] text-apple-lightMuted dark:text-apple-darkMuted px-1">
+        <div className="flex items-center justify-between text-[11px] text-notes-lightMuted dark:text-notes-darkMuted px-1">
           <span className="font-medium truncate max-w-[150px]">
             {folderTitle} ({notes.length})
           </span>
@@ -164,7 +164,7 @@ export const NotesList: React.FC<NotesListProps> = ({
             <select
               value={sortOption}
               onChange={(e) => onSortChange(e.target.value as SortOption)}
-              className="bg-transparent text-[11px] outline-none cursor-pointer text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white"
+              className="bg-transparent text-[11px] outline-none cursor-pointer text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white"
             >
               <option value="updated_desc" className="bg-white dark:bg-[#252528] text-black dark:text-white">Date Modified</option>
               <option value="created_desc" className="bg-white dark:bg-[#252528] text-black dark:text-white">Date Created</option>
@@ -191,7 +191,7 @@ export const NotesList: React.FC<NotesListProps> = ({
       {/* Notes List Content */}
       <div className="flex-1 overflow-y-auto p-2">
         {notes.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center p-6 text-center text-apple-lightMuted dark:text-apple-darkMuted">
+          <div className="h-full flex flex-col items-center justify-center p-6 text-center text-notes-lightMuted dark:text-notes-darkMuted">
             <FileText size={36} className="mb-2 opacity-40 stroke-[1.5]" />
             <p className="text-sm font-medium">No Notes</p>
             <p className="text-xs mt-1 opacity-70">
@@ -207,8 +207,8 @@ export const NotesList: React.FC<NotesListProps> = ({
             {/* Pinned Section */}
             {pinnedNotes.length > 0 && (
               <div className="mb-3">
-                <div className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-semibold tracking-wider uppercase text-apple-lightMuted dark:text-apple-darkMuted">
-                  <Pin size={11} className="fill-current text-apple-yellow" />
+                <div className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-semibold tracking-wider uppercase text-notes-lightMuted dark:text-notes-darkMuted">
+                  <Pin size={11} className="fill-current text-notes-yellow" />
                   <span>Pinned</span>
                 </div>
                 <div>{pinnedNotes.map(renderNoteCard)}</div>
@@ -219,7 +219,7 @@ export const NotesList: React.FC<NotesListProps> = ({
             {regularNotes.length > 0 && (
               <div>
                 {pinnedNotes.length > 0 && (
-                  <div className="px-2 py-1 text-[11px] font-semibold tracking-wider uppercase text-apple-lightMuted dark:text-apple-darkMuted">
+                  <div className="px-2 py-1 text-[11px] font-semibold tracking-wider uppercase text-notes-lightMuted dark:text-notes-darkMuted">
                     Notes
                   </div>
                 )}

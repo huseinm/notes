@@ -55,18 +55,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md bg-white dark:bg-[#252528] border border-apple-lightBorder dark:border-apple-darkBorder rounded-xl shadow-2xl p-5 select-none text-apple-lightText dark:text-apple-darkText"
+        className="w-full max-w-md bg-white dark:bg-[#252528] border border-notes-lightBorder dark:border-notes-darkBorder rounded-xl shadow-2xl p-5 select-none text-notes-lightText dark:text-notes-darkText"
       >
-        <div className="flex items-center justify-between pb-3 border-b border-apple-lightBorder dark:border-apple-darkBorder/60">
+        <div className="flex items-center justify-between pb-3 border-b border-notes-lightBorder dark:border-notes-darkBorder/60">
           <div className="flex items-center gap-2">
-            <Server size={18} className="text-apple-yellow" />
-            <h3 className="font-semibold text-sm text-apple-lightText dark:text-white">
+            <Server size={18} className="text-notes-yellow" />
+            <h3 className="font-semibold text-sm text-notes-lightText dark:text-white">
               Self-Hosted Settings & Storage
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="text-apple-lightMuted dark:text-apple-darkMuted hover:text-black dark:hover:text-white transition-colors"
+            className="text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white transition-colors"
           >
             <X size={16} />
           </button>
@@ -74,52 +74,52 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         <div className="mt-4 space-y-4 text-xs">
           {/* System Info Box */}
-          <div className="p-3 rounded-lg bg-black/5 dark:bg-black/30 border border-apple-lightBorder dark:border-apple-darkBorder/40 space-y-2">
+          <div className="p-3 rounded-lg bg-black/5 dark:bg-black/30 border border-notes-lightBorder dark:border-notes-darkBorder/40 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-apple-lightMuted dark:text-apple-darkMuted">Engine</span>
-              <span className="font-medium text-apple-lightText dark:text-white">
+              <span className="text-notes-lightMuted dark:text-notes-darkMuted">Engine</span>
+              <span className="font-medium text-notes-lightText dark:text-white">
                 SQLite WAL + Node.js (Docker Ready)
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-apple-lightMuted dark:text-apple-darkMuted">Active Notes</span>
-              <span className="font-semibold text-amber-600 dark:text-apple-yellow">{stats.totalNotes} notes</span>
+              <span className="text-notes-lightMuted dark:text-notes-darkMuted">Active Notes</span>
+              <span className="font-semibold text-amber-600 dark:text-notes-yellow">{stats.totalNotes} notes</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-apple-lightMuted dark:text-apple-darkMuted">Folders</span>
-              <span className="font-semibold text-apple-lightText dark:text-white">{stats.totalFolders} folders</span>
+              <span className="text-notes-lightMuted dark:text-notes-darkMuted">Folders</span>
+              <span className="font-semibold text-notes-lightText dark:text-white">{stats.totalFolders} folders</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-apple-lightMuted dark:text-apple-darkMuted">License</span>
+              <span className="text-notes-lightMuted dark:text-notes-darkMuted">License</span>
               <span className="font-medium text-emerald-600 dark:text-emerald-400">MIT Open Source</span>
             </div>
           </div>
 
           {/* Backup & Export Section */}
           <div className="space-y-2 pt-2">
-            <h4 className="font-semibold text-apple-lightText dark:text-white flex items-center gap-1.5">
-              <HardDrive size={14} className="text-apple-yellow" />
+            <h4 className="font-semibold text-notes-lightText dark:text-white flex items-center gap-1.5">
+              <HardDrive size={14} className="text-notes-yellow" />
               Database Backup & Portability
             </h4>
-            <p className="text-apple-lightMuted dark:text-apple-darkMuted leading-relaxed">
+            <p className="text-notes-lightMuted dark:text-notes-darkMuted leading-relaxed">
               Export your entire database to a JSON file or restore from a previous backup at any time.
             </p>
 
             <div className="grid grid-cols-2 gap-2 pt-1">
               <button
                 onClick={handleDownloadBackup}
-                className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-apple-lightHover dark:bg-apple-darkHover hover:bg-black/10 dark:hover:bg-black/40 text-apple-lightText dark:text-white font-medium transition-colors"
+                className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-notes-lightHover dark:bg-notes-darkHover hover:bg-black/10 dark:hover:bg-black/40 text-notes-lightText dark:text-white font-medium transition-colors"
               >
-                <Download size={14} className="text-apple-yellow" />
+                <Download size={14} className="text-notes-yellow" />
                 <span>Export Backup</span>
               </button>
 
               <button
                 disabled={importing}
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-apple-lightHover dark:bg-apple-darkHover hover:bg-black/10 dark:hover:bg-black/40 text-apple-lightText dark:text-white font-medium transition-colors disabled:opacity-50"
+                className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-notes-lightHover dark:bg-notes-darkHover hover:bg-black/10 dark:hover:bg-black/40 text-notes-lightText dark:text-white font-medium transition-colors disabled:opacity-50"
               >
-                <Upload size={14} className="text-apple-yellow" />
+                <Upload size={14} className="text-notes-yellow" />
                 <span>{importing ? 'Importing...' : 'Restore Backup'}</span>
               </button>
 
@@ -141,10 +141,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center justify-end mt-6 pt-3 border-t border-apple-lightBorder dark:border-apple-darkBorder/60">
+        <div className="flex items-center justify-end mt-6 pt-3 border-t border-notes-lightBorder dark:border-notes-darkBorder/60">
           <button
             onClick={onClose}
-            className="text-xs px-4 py-1.5 rounded-lg bg-apple-yellow hover:bg-apple-yellowHover text-black font-semibold transition-colors shadow-xs"
+            className="text-xs px-4 py-1.5 rounded-lg bg-notes-yellow hover:bg-notes-yellowHover text-black font-semibold transition-colors shadow-xs"
           >
             Done
           </button>

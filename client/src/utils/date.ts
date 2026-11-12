@@ -1,4 +1,4 @@
-export function formatAppleDate(timestamp: number): string {
+export function formatNoteDate(timestamp: number): string {
   if (!timestamp) return '';
   const date = new Date(timestamp);
   const now = new Date();
@@ -28,7 +28,7 @@ export function formatAppleDate(timestamp: number): string {
     return date.toLocaleDateString([], { weekday: 'long' });
   }
 
-  // Format as M/D/YY like in Apple Notes screenshot (e.g. 9/9/24)
+  // Format as M/D/YY (e.g. 9/9/24)
   const month = date.getMonth() + 1;
   const day = date.getDate();
   const year = String(date.getFullYear()).slice(-2);

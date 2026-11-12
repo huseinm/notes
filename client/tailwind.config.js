@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        apple: {
+        notes: {
           yellow: '#e5a93c',
           yellowHover: '#d4982a',
           yellowActive: '#c48920',

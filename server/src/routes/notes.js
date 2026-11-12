@@ -45,7 +45,7 @@ router.get('/', (req, res) => {
     }
 
     // Sorting
-    // In Apple Notes, pinned notes are always pinned to the top within their active view
+    // Pinned notes are always pinned to the top within their active view
     query += ` ORDER BY n.is_pinned DESC`;
 
     switch (sort) {
