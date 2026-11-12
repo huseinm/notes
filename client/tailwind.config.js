@@ -35,17 +35,16 @@ export default {
       },
       fontFamily: {
         sans: [
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "SF Pro Text",
-          "SF Pro Display",
+          "system-ui",
+          "Segoe UI",
+          "Roboto",
           "Helvetica Neue",
           "Helvetica",
           "Arial",
           "sans-serif"
         ],
         mono: [
-          "SF Mono",
+          "ui-monospace",
           "Menlo",
           "Monaco",
           "Consolas",

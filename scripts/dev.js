@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 
-console.log('🚀 Starting Apple Notes Self-Hosted in Development mode...\n');
+console.log('🚀 Starting Notes Self-Hosted in Development mode...\n');
 
 const server = spawn('npm', ['run', 'dev', '--prefix', 'server'], {
   stdio: 'inherit',

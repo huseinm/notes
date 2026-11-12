@@ -357,7 +357,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
     if (format === 'html') {
       mimeType = 'text/html';
       fileExt = '.html';
-      contentToExport = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${exportHeading}</title><style>body{font-family:-apple-system,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.6;}</style></head><body><h1>${exportHeading}</h1>${editor?.getHTML() || note.content}</body></html>`;
+      contentToExport = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${exportHeading}</title><style>body{font-family:system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.6;}</style></head><body><h1>${exportHeading}</h1>${editor?.getHTML() || note.content}</body></html>`;
     } else if (format === 'markdown') {
       mimeType = 'text/markdown';
       fileExt = '.md';
