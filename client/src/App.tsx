@@ -8,7 +8,7 @@ import { SettingsModal } from './components/Modals/SettingsModal';
 import { ShortcutsModal } from './components/Modals/ShortcutsModal';
 import { Folder, FolderStats, Note, SortOption, ViewType } from './types';
 import * as api from './api';
-import { ChevronLeft, FileText, SquarePen } from 'lucide-react';
+import { FileText, SquarePen } from 'lucide-react';
 
 export const App: React.FC = () => {
   // Theme state: default to dark as shown in user screenshot
@@ -244,12 +244,14 @@ export const App: React.FC = () => {
           await api.deleteNotePermanently(activeNote.id);
           await loadFolders();
           await loadNotes();
+          setMobilePane('list');
         }
       } else {
         // Move to trash
         await api.trashNote(activeNote.id);
         await loadFolders();
         await loadNotes();
+        setMobilePane('list');
       }
     } catch (err) {
       console.error('Failed to delete note:', err);
@@ -361,7 +363,14 @@ export const App: React.FC = () => {
       {/* Top Header */}
       <Header
         isSidebarOpen={isSidebarOpen}
-        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        onToggleSidebar={() => {
+          if (window.innerWidth < 768) {
+            setIsSidebarOpen(true);
+            setMobilePane((prev) => (prev === 'sidebar' ? 'list' : 'sidebar'));
+          } else {
+            setIsSidebarOpen(!isSidebarOpen);
+          }
+        }}
         isDarkMode={isDarkMode}
         onToggleTheme={() => setIsDarkMode(!isDarkMode)}
         onOpenSettings={() => setIsSettingsOpen(true)}
@@ -371,19 +380,6 @@ export const App: React.FC = () => {
 
       {/* Main 3-Pane Body */}
       <main className="flex-1 flex overflow-hidden relative">
-        {/* Mobile pane navigation breadcrumb on tiny screens */}
-        <div className="md:hidden absolute top-2 left-2 z-40 flex items-center gap-1">
-          {mobilePane !== 'sidebar' && (
-            <button
-              onClick={() => setMobilePane(mobilePane === 'editor' ? 'list' : 'sidebar')}
-              className="p-1.5 rounded-lg bg-black/60 backdrop-blur-md text-notes-yellow flex items-center text-xs gap-1"
-            >
-              <ChevronLeft size={16} />
-              <span>{mobilePane === 'editor' ? 'Notes' : 'Folders'}</span>
-            </button>
-          )}
-        </div>
-
         {/* Pane 1: Folders Sidebar */}
         <div
           className={`${
@@ -413,8 +409,8 @@ export const App: React.FC = () => {
         {/* Pane 2: Notes List */}
         <div
           className={`${
-            mobilePane === 'list' || mobilePane === 'sidebar' ? 'block' : 'hidden md:block'
-          } ${mobilePane === 'list' ? 'w-full md:w-80' : 'w-80'}`}
+            mobilePane === 'list' ? 'block w-full md:w-80' : 'hidden md:block md:w-80'
+          }`}
         >
           <NotesList
             notes={notes}
@@ -429,13 +425,17 @@ export const App: React.FC = () => {
             onEmptyTrash={handleEmptyTrash}
             folderTitle={getFolderTitle()}
             searchInputRef={searchInputRef}
+            onBackToFolders={() => {
+              setIsSidebarOpen(true);
+              setMobilePane('sidebar');
+            }}
           />
         </div>
 
         {/* Pane 3: Note Editor */}
         <div
           className={`flex-1 flex flex-col h-full overflow-hidden ${
-            mobilePane === 'editor' ? 'block w-full' : 'hidden md:flex'
+            mobilePane === 'editor' ? 'flex w-full' : 'hidden md:flex'
           }`}
         >
           {activeNote ? (
@@ -449,6 +449,7 @@ export const App: React.FC = () => {
               isTrashView={selectedView === 'trash'}
               onRestoreNote={handleRestoreNote}
               onNewNote={handleNewNote}
+              onBackToList={() => setMobilePane('list')}
             />
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-notes-lightMuted dark:text-notes-darkMuted">

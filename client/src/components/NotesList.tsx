@@ -7,7 +7,8 @@ import {
   ArrowUpDown, 
   FileText,
   Plus,
-  Folder as FolderIcon
+  Folder as FolderIcon,
+  ChevronLeft
 } from 'lucide-react';
 import { Note, SortOption } from '../types';
 import { formatNoteDate } from '../utils/date';
@@ -25,6 +26,7 @@ interface NotesListProps {
   onEmptyTrash: () => void;
   folderTitle: string;
   searchInputRef?: React.RefObject<HTMLInputElement>;
+  onBackToFolders?: () => void;
 }
 
 export const NotesList: React.FC<NotesListProps> = ({
@@ -39,7 +41,8 @@ export const NotesList: React.FC<NotesListProps> = ({
   isTrashView,
   onEmptyTrash,
   folderTitle,
-  searchInputRef
+  searchInputRef,
+  onBackToFolders
 }) => {
   const pinnedNotes = notes.filter((n) => n.is_pinned === 1 && !isTrashView);
   const regularNotes = notes.filter((n) => n.is_pinned === 0 || isTrashView);
@@ -113,7 +116,7 @@ export const NotesList: React.FC<NotesListProps> = ({
   };
 
   return (
-    <div className="w-80 flex-shrink-0 border-r border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightPanel dark:bg-[#202023] flex flex-col h-[calc(100vh-3rem)] transition-colors">
+    <div className="w-full md:w-80 flex-shrink-0 border-r border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightPanel dark:bg-[#202023] flex flex-col h-[calc(100vh-3rem)] transition-colors">
       {/* Top Bar: Search and Sort */}
       <div className="p-3 pb-2 border-b border-notes-lightBorder dark:border-notes-darkBorder/60 space-y-2">
         <div className="flex items-center gap-2">
@@ -155,9 +158,20 @@ export const NotesList: React.FC<NotesListProps> = ({
 
         {/* Subhead / Sort and count */}
         <div className="flex items-center justify-between text-[11px] text-notes-lightMuted dark:text-notes-darkMuted px-1">
-          <span className="font-medium truncate max-w-[150px]">
-            {folderTitle} ({notes.length})
-          </span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            {onBackToFolders && (
+              <button
+                onClick={onBackToFolders}
+                className="md:hidden flex items-center gap-0.5 text-amber-600 dark:text-notes-yellow font-semibold pr-1"
+              >
+                <ChevronLeft size={14} />
+                <span>Folders</span>
+              </button>
+            )}
+            <span className="font-medium truncate max-w-[150px]">
+              {folderTitle} ({notes.length})
+            </span>
+          </div>
 
           <div className="flex items-center gap-1">
             <ArrowUpDown size={12} />
@@ -194,13 +208,19 @@ export const NotesList: React.FC<NotesListProps> = ({
           <div className="h-full flex flex-col items-center justify-center p-6 text-center text-notes-lightMuted dark:text-notes-darkMuted">
             <FileText size={36} className="mb-2 opacity-40 stroke-[1.5]" />
             <p className="text-sm font-medium">No Notes</p>
-            <p className="text-xs mt-1 opacity-70">
-              {searchQuery
-                ? 'No notes matching your search'
-                : isTrashView
-                ? 'Recently deleted notes will appear here'
-                : 'Click + to create your first note'}
-            </p>
+            {searchQuery ? (
+              <p className="text-xs mt-1 opacity-70">No notes matching your search</p>
+            ) : isTrashView ? (
+              <p className="text-xs mt-1 opacity-70">Recently deleted notes will appear here</p>
+            ) : (
+              <button
+                onClick={onNewNote}
+                className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-notes-yellow/15 hover:bg-notes-yellow text-amber-700 dark:text-notes-yellow hover:text-black text-xs font-medium transition-colors cursor-pointer"
+              >
+                <Plus size={14} />
+                <span>Click + to create your first note</span>
+              </button>
+            )}
           </div>
         ) : (
           <div>

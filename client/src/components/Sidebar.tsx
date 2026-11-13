@@ -69,7 +69,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside className="w-64 flex-shrink-0 border-r border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightSidebar dark:bg-notes-darkSidebar flex flex-col h-[calc(100vh-3rem)] select-none transition-colors">
+    <aside className="w-full md:w-64 flex-shrink-0 border-r border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightSidebar dark:bg-notes-darkSidebar flex flex-col h-[calc(100vh-3rem)] select-none transition-colors">
       {/* Folder Section List */}
       <div className="flex-1 overflow-y-auto px-2 py-3 space-y-1">
         {/* All Notes */}

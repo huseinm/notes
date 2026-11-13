@@ -118,6 +118,7 @@ interface TipTapEditorProps {
   isTrashView: boolean;
   onRestoreNote: () => void;
   onNewNote: () => void;
+  onBackToList?: () => void;
 }
 
 export const TipTapEditor: React.FC<TipTapEditorProps> = ({
@@ -128,7 +129,8 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
   onDeleteNote,
   isTrashView,
   onRestoreNote,
-  onNewNote
+  onNewNote,
+  onBackToList
 }) => {
   const [title, setTitle] = useState(note.title || '');
   const titleRef = useRef(title);
@@ -393,6 +395,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
         onMoveToFolder={handleMoveToFolder}
         onUploadImage={handleUploadImage}
         onExport={handleExport}
+        onBackToList={onBackToList}
       />
 
       {/* Editor Body Area */}

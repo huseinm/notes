@@ -16,6 +16,7 @@ import {
   Quote, 
   Image as ImageIcon,
   ChevronDown,
+  ChevronLeft,
   Download,
   Printer,
   FileCode,
@@ -37,6 +38,7 @@ interface EditorToolbarProps {
   onMoveToFolder: (folderId: string) => void;
   onUploadImage: (file: File) => Promise<void>;
   onExport: (format: 'markdown' | 'txt' | 'html' | 'print') => void;
+  onBackToList?: () => void;
 }
 
 type MenuType = 'folder' | 'typography' | 'table' | 'export' | null;
@@ -53,7 +55,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
   currentFolderId,
   onMoveToFolder,
   onUploadImage,
-  onExport
+  onExport,
+  onBackToList
 }) => {
   const [openMenu, setOpenMenu] = useState<MenuType>(null);
 
@@ -105,8 +108,19 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
 
   return (
     <div className="h-12 border-b border-notes-lightBorder dark:border-notes-darkBorder/60 bg-notes-lightBg dark:bg-notes-darkBg flex items-center justify-between px-4 select-none gap-2 transition-colors">
-      {/* Left side: Delete / Restore */}
-      <div className="flex items-center gap-1.5">
+      {/* Left side: Mobile Back, Delete / Restore, Folder */}
+      <div className="flex items-center gap-1 sm:gap-1.5">
+        {onBackToList && (
+          <button
+            onClick={onBackToList}
+            title="Back to Notes List"
+            className="md:hidden flex items-center gap-0.5 px-2 py-1 rounded-md text-xs font-semibold text-amber-600 dark:text-notes-yellow hover:bg-notes-lightHover dark:hover:bg-notes-darkHover transition-colors"
+          >
+            <ChevronLeft size={16} />
+            <span>Notes</span>
+          </button>
+        )}
+
         {isTrashView ? (
           <button
             onClick={onRestoreNote}
