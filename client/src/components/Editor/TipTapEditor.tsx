@@ -380,7 +380,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-3rem)] overflow-hidden bg-notes-lightBg dark:bg-notes-darkBg text-notes-lightText dark:text-notes-darkText transition-colors">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-notes-lightBg dark:bg-notes-darkBg text-notes-lightText dark:text-notes-darkText transition-colors">
       {/* Top Toolbar */}
       <EditorToolbar
         editor={editor}

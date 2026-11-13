@@ -116,7 +116,7 @@ export const NotesList: React.FC<NotesListProps> = ({
   };
 
   return (
-    <div className="w-full md:w-80 flex-shrink-0 border-r border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightPanel dark:bg-[#202023] flex flex-col h-[calc(100vh-3rem)] transition-colors">
+    <div className="w-full md:w-80 flex-shrink-0 border-r border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightPanel dark:bg-[#202023] flex flex-col h-full transition-colors">
       {/* Top Bar: Search and Sort */}
       <div className="p-3 pb-2 border-b border-notes-lightBorder dark:border-notes-darkBorder/60 space-y-2">
         <div className="flex items-center gap-2">

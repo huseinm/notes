@@ -69,7 +69,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside className="w-full md:w-64 flex-shrink-0 border-r border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightSidebar dark:bg-notes-darkSidebar flex flex-col h-[calc(100vh-3rem)] select-none transition-colors">
+    <aside className="w-full md:w-64 flex-shrink-0 border-r border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightSidebar dark:bg-notes-darkSidebar flex flex-col h-full select-none transition-colors">
       {/* Folder Section List */}
       <div className="flex-1 overflow-y-auto px-2 py-3 space-y-1">
         {/* All Notes */}
@@ -90,10 +90,51 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </span>
         </button>
 
-        {/* Separator / Header */}
-        <div className="pt-3 pb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-notes-lightMuted dark:text-notes-darkMuted">
-          Folders
+        {/* Separator / Header with Quick New Folder Button */}
+        <div className="pt-3 pb-1 px-3 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-notes-lightMuted dark:text-notes-darkMuted">
+          <span>Folders</span>
+          <button
+            type="button"
+            onClick={() => setIsCreating(true)}
+            title="New Folder"
+            className="flex items-center gap-1 px-1.5 py-0.5 rounded text-amber-600 dark:text-notes-yellow hover:bg-notes-lightHover dark:hover:bg-notes-darkHover normal-case tracking-normal font-medium transition-colors"
+          >
+            <FolderPlus size={14} />
+            <span className="md:hidden text-xs">New</span>
+          </button>
         </div>
+
+        {/* Inline Create Folder Form at top of list so mobile keyboard never covers it */}
+        {isCreating && (
+          <form onSubmit={handleCreateSubmit} className="p-2 mx-1 mb-2 rounded-lg bg-black/5 dark:bg-white/5 border border-notes-lightBorder dark:border-notes-darkBorder space-y-2">
+            <input
+              type="text"
+              autoFocus
+              placeholder="New folder name..."
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+              className="w-full text-xs px-2.5 py-1.5 rounded-md bg-white dark:bg-black/40 border border-notes-lightBorder dark:border-notes-darkBorder outline-none focus:border-notes-yellow text-notes-lightText dark:text-white"
+            />
+            <div className="flex items-center justify-end gap-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCreating(false);
+                  setNewFolderName('');
+                }}
+                className="text-[11px] px-2.5 py-1 rounded text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="text-[11px] px-3 py-1 rounded bg-notes-yellow hover:bg-notes-yellowHover text-black font-semibold transition-colors"
+              >
+                Create
+              </button>
+            </div>
+          </form>
+        )}
 
         {/* Individual Folders */}
         {folders.map((folder) => {
@@ -139,7 +180,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         setMenuFolderId(isMenuOpen ? null : folder.id);
                       }}
                       className={`p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 text-notes-lightMuted dark:text-notes-darkMuted transition-opacity ${
-                        isMenuOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                        isMenuOpen ? 'opacity-100' : 'opacity-100 md:opacity-0 md:group-hover:opacity-100'
                       }`}
                       title="Folder options"
                     >
@@ -205,46 +246,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* Footer: Create Folder Form / Button */}
-      <div className="p-2 border-t border-notes-lightBorder dark:border-notes-darkBorder">
-        {isCreating ? (
-          <form onSubmit={handleCreateSubmit} className="space-y-1.5">
-            <input
-              type="text"
-              autoFocus
-              placeholder="New folder name..."
-              value={newFolderName}
-              onChange={(e) => setNewFolderName(e.target.value)}
-              className="w-full text-xs px-2.5 py-1.5 rounded-md bg-white dark:bg-black/30 border border-notes-lightBorder dark:border-notes-darkBorder outline-none focus:border-notes-yellow text-notes-lightText dark:text-white"
-            />
-            <div className="flex items-center justify-end gap-1.5">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsCreating(false);
-                  setNewFolderName('');
-                }}
-                className="text-[11px] px-2 py-1 rounded text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="text-[11px] px-2.5 py-1 rounded bg-notes-yellow hover:bg-notes-yellowHover text-black font-medium transition-colors"
-              >
-                Create
-              </button>
-            </div>
-          </form>
-        ) : (
-          <button
-            onClick={() => setIsCreating(true)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-amber-600 dark:text-notes-yellow hover:bg-notes-lightHover dark:hover:bg-notes-darkHover transition-colors"
-          >
-            <FolderPlus size={16} />
-            <span>New Folder</span>
-          </button>
-        )}
+      {/* Footer: Create Folder Button */}
+      <div className="p-2 pb-[ max(0.5rem,env(safe-area-inset-bottom)) ] border-t border-notes-lightBorder dark:border-notes-darkBorder flex-shrink-0">
+        <button
+          onClick={() => setIsCreating(true)}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-amber-600 dark:text-notes-yellow hover:bg-notes-lightHover dark:hover:bg-notes-darkHover transition-colors"
+        >
+          <FolderPlus size={16} />
+          <span>New Folder</span>
+        </button>
       </div>
     </aside>
   );

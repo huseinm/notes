@@ -359,7 +359,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-notes-lightBg dark:bg-notes-darkBg font-sans text-notes-lightText dark:text-notes-darkText transition-colors">
+    <div className="h-[100dvh] w-screen flex flex-col overflow-hidden bg-notes-lightBg dark:bg-notes-darkBg font-sans text-notes-lightText dark:text-notes-darkText transition-colors">
       {/* Top Header */}
       <Header
         isSidebarOpen={isSidebarOpen}
@@ -382,7 +382,7 @@ export const App: React.FC = () => {
       <main className="flex-1 flex overflow-hidden relative">
         {/* Pane 1: Folders Sidebar */}
         <div
-          className={`${
+          className={`h-full ${
             !isSidebarOpen
               ? 'hidden'
               : mobilePane === 'sidebar'
@@ -408,7 +408,7 @@ export const App: React.FC = () => {
 
         {/* Pane 2: Notes List */}
         <div
-          className={`${
+          className={`h-full ${
             mobilePane === 'list' ? 'block w-full md:w-80' : 'hidden md:block md:w-80'
           }`}
         >
