@@ -25,6 +25,7 @@ Runs effortlessly in a single lightweight Docker container (~50MB RAM) on your *
   - **Typography (`Aa`)**: Title (`H1`), Heading (`H2`), Subheading (`H3`), Body (`P`), and Monospaced code blocks.
   - **Formatting**: Bold, Italic, Underline, Strikethrough, Blockquotes, Inline Code, Horizontal Dividers, Ordered and Bullet lists.
   - **Live Metadata**: Centered timestamp and automatic word count displayed at the top of every note.
+- **📄 Mobile Document Scanner**: Capture documents or receipts with your phone camera, preview & rotate, apply high-contrast **Document (B&W)**, **Grayscale**, or **Enhanced Color** filters, and save directly into a note as a crisp scan (ready to export or print as PDF).
 - **🖼️ Images & Attachments**: Paste images directly from your clipboard (`Cmd/Ctrl + V`), drag & drop images into the editor, or upload via the toolbar (up to 20MB per image).
 - **💾 Zero-Loss Instant Auto-Save**: Debounced background persistence with immediate flush when switching notes or closing the browser tab, paired with a live save status indicator (`Saved` / `Saving...`).
 - **📌 Pinned Notes & Sorting**: Pin important notes to the top of any folder, and sort notes by **Date Modified**, **Date Created**, or **Title**.

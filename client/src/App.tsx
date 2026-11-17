@@ -6,9 +6,24 @@ import { TipTapEditor } from './components/Editor/TipTapEditor';
 import { FolderModal } from './components/Modals/FolderModal';
 import { SettingsModal } from './components/Modals/SettingsModal';
 import { ShortcutsModal } from './components/Modals/ShortcutsModal';
+import { DocumentScannerModal } from './components/Modals/DocumentScannerModal';
 import { Folder, FolderStats, Note, SortOption, ViewType } from './types';
 import * as api from './api';
 import { FileText, SquarePen } from 'lucide-react';
+
+function isNoteEmpty(note: Note | null | undefined): boolean {
+  if (!note) return true;
+  const hasTitle = Boolean(note.title && note.title.trim().length > 0);
+  const hasText = Boolean(note.plain_text && note.plain_text.trim().length > 0);
+  const html = note.content || '';
+  const hasMediaOrStructure =
+    html.includes('<img') ||
+    html.includes('<table') ||
+    html.includes('data-type="taskList"') ||
+    html.includes('<hr') ||
+    html.includes('<pre');
+  return !hasTitle && !hasText && !hasMediaOrStructure;
+}
 
 export const App: React.FC = () => {
   // Theme state: default to dark as shown in user screenshot
@@ -41,7 +56,11 @@ export const App: React.FC = () => {
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  const [isListScannerOpen, setIsListScannerOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const unsavedDraftIdsRef = useRef<Set<string>>(new Set());
+  const activeNoteRef = useRef<Note | null>(null);
+  activeNoteRef.current = activeNote;
 
   // Sync theme with HTML class
   useEffect(() => {
@@ -107,10 +126,54 @@ export const App: React.FC = () => {
     loadNotes();
   }, [loadNotes]);
 
+  // Discard a note if it has no title, text, or media
+  const discardNoteIfEmpty = useCallback(
+    async (noteToCheck: Note | null, selectFallback = false) => {
+      if (!noteToCheck || !isNoteEmpty(noteToCheck)) return false;
+
+      const emptyId = noteToCheck.id;
+      const wasUnsavedDraft = unsavedDraftIdsRef.current.has(emptyId);
+      unsavedDraftIdsRef.current.delete(emptyId);
+
+      setNotes((prev) => {
+        const remaining = prev.filter((n) => n.id !== emptyId);
+        if (selectFallback) {
+          const next = remaining[0] || null;
+          setSelectedNoteId(next ? next.id : null);
+          setActiveNote(next);
+        }
+        return remaining;
+      });
+
+      if (!wasUnsavedDraft) {
+        try {
+          await api.deleteNotePermanently(emptyId);
+          await loadFolders();
+        } catch (err) {
+          console.error('Failed to discard empty note:', err);
+        }
+      }
+      return true;
+    },
+    [loadFolders]
+  );
+
   // Handle switching note selection
   const handleSelectNote = async (noteId: string) => {
+    const current = activeNoteRef.current;
+    if (current && current.id !== noteId && isNoteEmpty(current)) {
+      await discardNoteIfEmpty(current, false);
+    }
+
     setSelectedNoteId(noteId);
     setMobilePane('editor');
+
+    if (unsavedDraftIdsRef.current.has(noteId)) {
+      const draft = notes.find((n) => n.id === noteId);
+      if (draft) setActiveNote(draft);
+      return;
+    }
+
     try {
       const note = await api.getNote(noteId);
       setActiveNote(note);
@@ -119,16 +182,61 @@ export const App: React.FC = () => {
     }
   };
 
-  // Handle creating a new note
+  // Handle creating a new note (starts as an unsaved draft until content is entered)
   const handleNewNote = async () => {
+    const current = activeNoteRef.current;
+    if (current && isNoteEmpty(current)) {
+      // Already on an empty note — just focus/open it without creating another empty note
+      setSelectedNoteId(current.id);
+      setMobilePane('editor');
+      return;
+    }
+
+    const defaultFolder = folders.find((f) => f.is_default === 1) || folders[0];
+    const targetFolderId =
+      selectedView === 'folder' && selectedFolderId
+        ? selectedFolderId
+        : defaultFolder?.id || null;
+    const targetFolder = folders.find((f) => f.id === targetFolderId);
+
+    const now = Date.now();
+    const draftId = `note_${crypto.randomUUID()}`;
+    const draftNote: Note = {
+      id: draftId,
+      folder_id: targetFolderId,
+      folder_name: targetFolder?.name,
+      title: '',
+      content: '',
+      plain_text: '',
+      is_pinned: 0,
+      is_trashed: 0,
+      created_at: now,
+      updated_at: now
+    };
+
+    unsavedDraftIdsRef.current.add(draftId);
+    setNotes((prev) => [draftNote, ...prev]);
+    setSelectedNoteId(draftId);
+    setActiveNote(draftNote);
+    setMobilePane('editor');
+    setSaveStatus('saved');
+  };
+
+  // Handle scanning a document directly from the Notes List
+  const handleAcceptScanFromList = async (scannedFile: File) => {
     try {
       setSaveStatus('saving');
-      // Folder assignment
+      const current = activeNoteRef.current;
+      if (current && isNoteEmpty(current)) {
+        await discardNoteIfEmpty(current, false);
+      }
+
+      const url = await api.uploadImage(scannedFile);
       const targetFolderId = selectedView === 'folder' ? selectedFolderId : null;
       const newNote = await api.createNote({
         folder_id: targetFolderId,
         title: '',
-        content: '',
+        content: `<p><img src="${url}"></p>`,
         plain_text: ''
       });
 
@@ -139,7 +247,7 @@ export const App: React.FC = () => {
       setMobilePane('editor');
       setSaveStatus('saved');
     } catch (err) {
-      console.error('Failed to create note:', err);
+      console.error('Failed to create scanned note:', err);
       setSaveStatus('error');
     }
   };
@@ -150,10 +258,27 @@ export const App: React.FC = () => {
     updates: Partial<Pick<Note, 'title' | 'content' | 'plain_text' | 'folder_id' | 'is_pinned'>>
   ) => {
     try {
+      const currentNote = activeNoteRef.current?.id === noteId ? activeNoteRef.current : notes.find((n) => n.id === noteId);
+      const mergedNote: Note | undefined = currentNote
+        ? { ...currentNote, ...updates, updated_at: Date.now() }
+        : undefined;
+
+      // If this is still an unsaved empty draft and no content was entered, keep it local-only
+      const isDraft = unsavedDraftIdsRef.current.has(noteId);
+      if (isDraft && mergedNote && isNoteEmpty(mergedNote) && updates.folder_id === undefined && updates.is_pinned === undefined) {
+        setActiveNote((prev) => (prev && prev.id === noteId ? mergedNote : prev));
+        setNotes((prev) => prev.map((n) => (n.id === noteId ? mergedNote : n)));
+        return;
+      }
+
+      const wasFirstSaveOfDraft = isDraft;
+      if (isDraft) {
+        unsavedDraftIdsRef.current.delete(noteId);
+      }
+
       setSaveStatus('saving');
 
       const isMovingFolder = updates.folder_id !== undefined;
-      const currentNote = activeNote?.id === noteId ? activeNote : notes.find((n) => n.id === noteId);
       const oldFolderId = currentNote?.folder_id;
 
       // Optimistic UI update when moving a note to another folder
@@ -195,7 +320,17 @@ export const App: React.FC = () => {
         }
       }
 
-      const updated = await api.updateNote(noteId, updates);
+      const payloadToSave = wasFirstSaveOfDraft && mergedNote
+        ? {
+            title: mergedNote.title,
+            content: mergedNote.content,
+            plain_text: mergedNote.plain_text,
+            folder_id: mergedNote.folder_id,
+            is_pinned: mergedNote.is_pinned
+          }
+        : updates;
+
+      const updated = await api.updateNote(noteId, payloadToSave);
 
       // Only update activeNote/notes if the note wasn't moved out of the current folder view
       const movedOutOfCurrentFolder =
@@ -211,8 +346,8 @@ export const App: React.FC = () => {
         );
       }
 
-      // Sync authoritative folder counts in background
-      if (isMovingFolder) {
+      // Sync authoritative folder counts in background when folder changed or a draft was saved for the first time
+      if (isMovingFolder || wasFirstSaveOfDraft) {
         await loadFolders();
       }
       setSaveStatus('saved');
@@ -395,7 +530,10 @@ export const App: React.FC = () => {
             stats={stats}
             selectedView={selectedView}
             selectedFolderId={selectedFolderId}
-            onSelectView={(view, folderId) => {
+            onSelectView={async (view, folderId) => {
+              if (activeNoteRef.current && isNoteEmpty(activeNoteRef.current)) {
+                await discardNoteIfEmpty(activeNoteRef.current, false);
+              }
               setSelectedView(view);
               setSelectedFolderId(folderId || null);
               setMobilePane('list');
@@ -425,9 +563,18 @@ export const App: React.FC = () => {
             onEmptyTrash={handleEmptyTrash}
             folderTitle={getFolderTitle()}
             searchInputRef={searchInputRef}
-            onBackToFolders={() => {
+            onBackToFolders={async () => {
+              if (activeNoteRef.current && isNoteEmpty(activeNoteRef.current)) {
+                await discardNoteIfEmpty(activeNoteRef.current, true);
+              }
               setIsSidebarOpen(true);
               setMobilePane('sidebar');
+            }}
+            onOpenScanner={() => setIsListScannerOpen(true)}
+            onDismissEmptyNote={() => {
+              if (activeNoteRef.current && isNoteEmpty(activeNoteRef.current)) {
+                discardNoteIfEmpty(activeNoteRef.current, true);
+              }
             }}
           />
         </div>
@@ -449,7 +596,12 @@ export const App: React.FC = () => {
               isTrashView={selectedView === 'trash'}
               onRestoreNote={handleRestoreNote}
               onNewNote={handleNewNote}
-              onBackToList={() => setMobilePane('list')}
+              onBackToList={async () => {
+                if (activeNoteRef.current && isNoteEmpty(activeNoteRef.current)) {
+                  await discardNoteIfEmpty(activeNoteRef.current, true);
+                }
+                setMobilePane('list');
+              }}
             />
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-notes-lightMuted dark:text-notes-darkMuted">
@@ -496,6 +648,12 @@ export const App: React.FC = () => {
       <ShortcutsModal
         isOpen={isShortcutsOpen}
         onClose={() => setIsShortcutsOpen(false)}
+      />
+
+      <DocumentScannerModal
+        isOpen={isListScannerOpen}
+        onClose={() => setIsListScannerOpen(false)}
+        onAcceptScan={handleAcceptScanFromList}
       />
     </div>
   );

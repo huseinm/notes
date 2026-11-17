@@ -100,7 +100,7 @@ router.get('/:id', (req, res) => {
 // CREATE note
 router.post('/', (req, res) => {
   try {
-    const { folder_id, title = '', content = '', plain_text = '' } = req.body;
+    const { id: requestedId, folder_id, title = '', content = '', plain_text = '' } = req.body;
 
     // If folder_id not provided, assign default folder
     let targetFolderId = folder_id;
@@ -109,7 +109,7 @@ router.post('/', (req, res) => {
       targetFolderId = defaultFolder ? defaultFolder.id : null;
     }
 
-    const id = `note_${crypto.randomUUID()}`;
+    const id = requestedId || `note_${crypto.randomUUID()}`;
     const now = Date.now();
     const finalPlainText = plain_text || cleanPlainText(content);
 
@@ -132,29 +132,43 @@ router.post('/', (req, res) => {
   }
 });
 
-// UPDATE note
+// UPDATE note (or insert if saving a client-side draft for the first time)
 router.put('/:id', (req, res) => {
   try {
     const { id } = req.params;
     const { title, content, plain_text, folder_id, is_pinned } = req.body;
 
     const existing = db.prepare('SELECT * FROM notes WHERE id = ?').get(id);
-    if (!existing) {
-      return res.status(404).json({ error: 'Note not found' });
-    }
-
     const now = Date.now();
-    const updatedTitle = title !== undefined ? title : existing.title;
-    const updatedContent = content !== undefined ? content : existing.content;
-    const updatedPlainText = plain_text !== undefined ? plain_text : cleanPlainText(updatedContent);
-    const updatedFolderId = folder_id !== undefined ? folder_id : existing.folder_id;
-    const updatedPinned = is_pinned !== undefined ? (is_pinned ? 1 : 0) : existing.is_pinned;
 
-    db.prepare(`
-      UPDATE notes
-      SET title = ?, content = ?, plain_text = ?, folder_id = ?, is_pinned = ?, updated_at = ?
-      WHERE id = ?
-    `).run(updatedTitle, updatedContent, updatedPlainText, updatedFolderId, updatedPinned, now, id);
+    if (!existing) {
+      let targetFolderId = folder_id;
+      if (!targetFolderId || targetFolderId === 'all') {
+        const defaultFolder = db.prepare('SELECT id FROM folders WHERE is_default = 1 LIMIT 1').get();
+        targetFolderId = defaultFolder ? defaultFolder.id : null;
+      }
+      const newTitle = title || '';
+      const newContent = content || '';
+      const newPlainText = plain_text !== undefined ? plain_text : cleanPlainText(newContent);
+      const newPinned = is_pinned ? 1 : 0;
+
+      db.prepare(`
+        INSERT INTO notes (id, folder_id, title, content, plain_text, is_pinned, is_trashed, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?)
+      `).run(id, targetFolderId, newTitle, newContent, newPlainText, newPinned, now, now);
+    } else {
+      const updatedTitle = title !== undefined ? title : existing.title;
+      const updatedContent = content !== undefined ? content : existing.content;
+      const updatedPlainText = plain_text !== undefined ? plain_text : cleanPlainText(updatedContent);
+      const updatedFolderId = folder_id !== undefined ? folder_id : existing.folder_id;
+      const updatedPinned = is_pinned !== undefined ? (is_pinned ? 1 : 0) : existing.is_pinned;
+
+      db.prepare(`
+        UPDATE notes
+        SET title = ?, content = ?, plain_text = ?, folder_id = ?, is_pinned = ?, updated_at = ?
+        WHERE id = ?
+      `).run(updatedTitle, updatedContent, updatedPlainText, updatedFolderId, updatedPinned, now, id);
+    }
 
     const updated = db.prepare(`
       SELECT n.*, f.name as folder_name

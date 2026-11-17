@@ -249,3 +249,28 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   pointer-events: none;
   height: 0;
 }
+
+/* Clean Print / PDF Export Styling */
+@media print {
+  html, body, #root, main {
+    background: #ffffff !important;
+    color: #111111 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  header, aside, .no-print {
+    display: none !important;
+  }
+
+  .ProseMirror {
+    color: #111111 !important;
+  }
+
+  .ProseMirror img {
+    max-width: 100% !important;
+    max-height: 90vh !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+}

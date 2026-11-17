@@ -20,7 +20,8 @@ import {
   Download,
   Printer,
   FileCode,
-  Folder as FolderIcon
+  Folder as FolderIcon,
+  ScanLine
 } from 'lucide-react';
 import { Editor } from '@tiptap/react';
 import { Folder } from '../../types';
@@ -37,6 +38,7 @@ interface EditorToolbarProps {
   currentFolderId: string | null;
   onMoveToFolder: (folderId: string) => void;
   onUploadImage: (file: File) => Promise<void>;
+  onOpenScanner?: () => void;
   onExport: (format: 'markdown' | 'txt' | 'html' | 'print') => void;
   onBackToList?: () => void;
 }
@@ -55,6 +57,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
   currentFolderId,
   onMoveToFolder,
   onUploadImage,
+  onOpenScanner,
   onExport,
   onBackToList
 }) => {
@@ -107,7 +110,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
   };
 
   return (
-    <div className="h-12 border-b border-notes-lightBorder dark:border-notes-darkBorder/60 bg-notes-lightBg dark:bg-notes-darkBg flex items-center justify-between px-4 select-none gap-2 transition-colors">
+    <div className="no-print h-12 border-b border-notes-lightBorder dark:border-notes-darkBorder/60 bg-notes-lightBg dark:bg-notes-darkBg flex items-center justify-between px-4 select-none gap-2 transition-colors">
       {/* Left side: Mobile Back, Delete / Restore, Folder */}
       <div className="flex items-center gap-1 sm:gap-1.5">
         {onBackToList && (
@@ -467,6 +470,18 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
         >
           <ImageIcon size={16} />
         </button>
+
+        {/* Scan Document Button */}
+        {!isTrashView && onOpenScanner && (
+          <button
+            onClick={onOpenScanner}
+            title="Scan Document"
+            className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-amber-600 dark:text-notes-yellow font-medium text-xs transition-colors"
+          >
+            <ScanLine size={16} />
+            <span className="hidden sm:inline">Scan</span>
+          </button>
+        )}
       </div>
 
       {/* Right side: Pin, Export, New Note */}

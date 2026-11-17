@@ -8,7 +8,8 @@ import {
   FileText,
   Plus,
   Folder as FolderIcon,
-  ChevronLeft
+  ChevronLeft,
+  ScanLine
 } from 'lucide-react';
 import { Note, SortOption } from '../types';
 import { formatNoteDate } from '../utils/date';
@@ -27,6 +28,8 @@ interface NotesListProps {
   folderTitle: string;
   searchInputRef?: React.RefObject<HTMLInputElement>;
   onBackToFolders?: () => void;
+  onOpenScanner?: () => void;
+  onDismissEmptyNote?: () => void;
 }
 
 export const NotesList: React.FC<NotesListProps> = ({
@@ -42,7 +45,9 @@ export const NotesList: React.FC<NotesListProps> = ({
   onEmptyTrash,
   folderTitle,
   searchInputRef,
-  onBackToFolders
+  onBackToFolders,
+  onOpenScanner,
+  onDismissEmptyNote
 }) => {
   const pinnedNotes = notes.filter((n) => n.is_pinned === 1 && !isTrashView);
   const regularNotes = notes.filter((n) => n.is_pinned === 0 || isTrashView);
@@ -116,7 +121,7 @@ export const NotesList: React.FC<NotesListProps> = ({
   };
 
   return (
-    <div className="w-full md:w-80 flex-shrink-0 border-r border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightPanel dark:bg-[#202023] flex flex-col h-full transition-colors">
+    <div className="no-print w-full md:w-80 flex-shrink-0 border-r border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightPanel dark:bg-[#202023] flex flex-col h-full transition-colors">
       {/* Top Bar: Search and Sort */}
       <div className="p-3 pb-2 border-b border-notes-lightBorder dark:border-notes-darkBorder/60 space-y-2">
         <div className="flex items-center gap-2">
@@ -144,15 +149,26 @@ export const NotesList: React.FC<NotesListProps> = ({
             )}
           </div>
 
-          {/* Quick New Note button in mobile / compact mode */}
+          {/* Quick Scan & New Note buttons in mobile / compact mode */}
           {!isTrashView && (
-            <button
-              onClick={onNewNote}
-              title="New Note (Cmd+N)"
-              className="p-1.5 rounded-lg bg-notes-yellow/20 hover:bg-notes-yellow text-amber-700 dark:text-notes-yellow hover:text-black transition-colors"
-            >
-              <Plus size={16} />
-            </button>
+            <div className="flex items-center gap-1">
+              {onOpenScanner && (
+                <button
+                  onClick={onOpenScanner}
+                  title="Scan Document to New Note"
+                  className="p-1.5 rounded-lg bg-notes-lightHover dark:bg-notes-darkHover hover:bg-notes-yellow text-amber-700 dark:text-notes-yellow hover:text-black transition-colors"
+                >
+                  <ScanLine size={16} />
+                </button>
+              )}
+              <button
+                onClick={onNewNote}
+                title="New Note (Cmd+N)"
+                className="p-1.5 rounded-lg bg-notes-yellow/20 hover:bg-notes-yellow text-amber-700 dark:text-notes-yellow hover:text-black transition-colors"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
           )}
         </div>
 
@@ -203,7 +219,14 @@ export const NotesList: React.FC<NotesListProps> = ({
       )}
 
       {/* Notes List Content */}
-      <div className="flex-1 overflow-y-auto p-2">
+      <div
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            onDismissEmptyNote?.();
+          }
+        }}
+        className="flex-1 overflow-y-auto p-2"
+      >
         {notes.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center p-6 text-center text-notes-lightMuted dark:text-notes-darkMuted">
             <FileText size={36} className="mb-2 opacity-40 stroke-[1.5]" />

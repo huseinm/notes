@@ -14,6 +14,7 @@ import { Note, Folder } from '../../types';
 import { EditorToolbar } from './EditorToolbar';
 import { uploadImage } from '../../api';
 import { formatFullNoteTimestamp } from '../../utils/date';
+import { DocumentScannerModal } from '../Modals/DocumentScannerModal';
 
 function htmlToMarkdown(html: string): string {
   const parser = new DOMParser();
@@ -133,6 +134,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
   onBackToList
 }) => {
   const [title, setTitle] = useState(note.title || '');
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
   const titleRef = useRef(title);
   titleRef.current = title;
   const noteIdRef = useRef(note.id);
@@ -156,11 +158,19 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
         saveTimeoutRef.current = null;
         const pending = pendingSaveRef.current;
         pendingSaveRef.current = null;
-        onUpdateNoteRef.current(pending.noteId, {
-          title: pending.title,
-          content: pending.content,
-          plain_text: pending.plain_text
-        });
+        const isPendingEmpty =
+          !pending.title.trim() &&
+          !pending.plain_text.trim() &&
+          !pending.content.includes('<img') &&
+          !pending.content.includes('<table') &&
+          !pending.content.includes('data-type="taskList"');
+        if (!isPendingEmpty) {
+          onUpdateNoteRef.current(pending.noteId, {
+            title: pending.title,
+            content: pending.content,
+            plain_text: pending.plain_text
+          });
+        }
       }
     };
 
@@ -316,6 +326,17 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
       const url = await uploadImage(file);
       if (editor) {
         editor.chain().focus().setImage({ src: url }).run();
+        // Immediately persist when an image or document scan is inserted
+        if (saveTimeoutRef.current) {
+          clearTimeout(saveTimeoutRef.current);
+          saveTimeoutRef.current = null;
+        }
+        pendingSaveRef.current = null;
+        onUpdateNote(noteIdRef.current, {
+          title: titleRef.current,
+          content: editor.getHTML(),
+          plain_text: editor.getText()
+        });
       }
     } catch (err: any) {
       alert(`Image upload error: ${err.message}`);
@@ -394,6 +415,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
         currentFolderId={note.folder_id}
         onMoveToFolder={handleMoveToFolder}
         onUploadImage={handleUploadImage}
+        onOpenScanner={() => setIsScannerOpen(true)}
         onExport={handleExport}
         onBackToList={onBackToList}
       />
@@ -433,6 +455,13 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
           <EditorContent editor={editor} />
         </div>
       </div>
+
+      {/* Document Scanner Modal */}
+      <DocumentScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onAcceptScan={handleUploadImage}
+      />
     </div>
   );
 };
