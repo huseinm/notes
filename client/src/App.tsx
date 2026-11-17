@@ -25,6 +25,13 @@ function isNoteEmpty(note: Note | null | undefined): boolean {
   return !hasTitle && !hasText && !hasMediaOrStructure;
 }
 
+function generateNoteId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return `note_${crypto.randomUUID()}`;
+  }
+  return `note_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+}
+
 export const App: React.FC = () => {
   // Theme state: default to dark as shown in user screenshot
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
@@ -200,7 +207,7 @@ export const App: React.FC = () => {
     const targetFolder = folders.find((f) => f.id === targetFolderId);
 
     const now = Date.now();
-    const draftId = `note_${crypto.randomUUID()}`;
+    const draftId = generateNoteId();
     const draftNote: Note = {
       id: draftId,
       folder_id: targetFolderId,
