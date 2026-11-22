@@ -53,6 +53,11 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_notes_updated ON notes(updated_at DESC);
   CREATE INDEX IF NOT EXISTS idx_notes_trashed ON notes(is_trashed);
   CREATE INDEX IF NOT EXISTS idx_notes_pinned ON notes(is_pinned);
+
+  CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );
 `);
 
 // Seed default folder and sample note if empty

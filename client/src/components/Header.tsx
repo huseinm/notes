@@ -7,8 +7,13 @@ import {
   Database, 
   Keyboard, 
   CheckCircle2,
-  NotebookPen
+  NotebookPen,
+  CloudOff,
+  HardDrive,
+  Lock,
+  RefreshCw
 } from 'lucide-react';
+import { SyncStatusSnapshot } from '../sync/localStore';
 
 interface HeaderProps {
   isSidebarOpen: boolean;
@@ -18,6 +23,7 @@ interface HeaderProps {
   onOpenSettings: () => void;
   onOpenShortcuts: () => void;
   saveStatus: 'saved' | 'saving' | 'error';
+  syncSnapshot?: SyncStatusSnapshot;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -27,7 +33,8 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleTheme,
   onOpenSettings,
   onOpenShortcuts,
-  saveStatus
+  saveStatus,
+  syncSnapshot
 }) => {
   return (
     <header className="h-12 border-b border-notes-lightBorder dark:border-notes-darkBorder bg-notes-lightSidebar dark:bg-notes-darkSidebar flex items-center justify-between px-3.5 z-20 select-none transition-colors">
@@ -54,19 +61,63 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Center status indicator */}
-      <div className="flex items-center text-xs text-notes-lightMuted dark:text-notes-darkMuted">
+      {/* Center status & sync indicator */}
+      <div className="flex items-center gap-2 text-xs text-notes-lightMuted dark:text-notes-darkMuted">
         {saveStatus === 'saving' && (
           <span className="flex items-center gap-1.5 animate-pulse text-amber-600 dark:text-notes-yellow">
             <span className="w-2 h-2 rounded-full bg-notes-yellow"></span>
             Saving...
           </span>
         )}
-        {saveStatus === 'saved' && (
-          <span className="flex items-center gap-1 opacity-80">
+        {saveStatus === 'saved' && (!syncSnapshot || syncSnapshot.status === 'synced') && (
+          <button
+            onClick={onOpenSettings}
+            title="All changes saved & synced. Click to configure server sync."
+            className="flex items-center gap-1.5 px-2 py-0.5 rounded-full hover:bg-notes-lightHover dark:hover:bg-notes-darkHover transition-colors"
+          >
             <CheckCircle2 size={12} className="text-emerald-500" />
-            <span className="hidden sm:inline">All changes saved</span>
+            <span className="hidden sm:inline">Synced</span>
+          </button>
+        )}
+        {saveStatus === 'saved' && syncSnapshot?.status === 'syncing' && (
+          <span className="flex items-center gap-1.5 text-amber-600 dark:text-notes-yellow">
+            <RefreshCw size={12} className="animate-spin" />
+            <span className="hidden sm:inline">Syncing...</span>
           </span>
+        )}
+        {saveStatus === 'saved' && syncSnapshot?.status === 'local_only' && (
+          <button
+            onClick={onOpenSettings}
+            title="Notes are saved on this device. Click to connect a self-hosted NAS or server."
+            className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-notes-yellow/15 text-amber-700 dark:text-notes-yellow hover:bg-notes-yellow/25 transition-colors font-medium text-[11px]"
+          >
+            <HardDrive size={12} />
+            <span>On-Device</span>
+            <span className="hidden md:inline opacity-80">· Connect Server</span>
+          </button>
+        )}
+        {saveStatus === 'saved' && syncSnapshot?.status === 'offline' && (
+          <button
+            onClick={onOpenSettings}
+            title="Server unreachable — all changes are safely stored on your device and will sync automatically when back online."
+            className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 hover:bg-amber-500/25 transition-colors font-medium text-[11px]"
+          >
+            <CloudOff size={12} />
+            <span>
+              Offline · Saved Locally
+              {syncSnapshot.pendingCount > 0 ? ` (${syncSnapshot.pendingCount})` : ''}
+            </span>
+          </button>
+        )}
+        {saveStatus === 'saved' && syncSnapshot?.status === 'auth_required' && (
+          <button
+            onClick={onOpenSettings}
+            title="Server requires password authentication"
+            className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 hover:bg-rose-500/25 transition-colors font-medium text-[11px]"
+          >
+            <Lock size={12} />
+            <span>Server Login Required</span>
+          </button>
         )}
         {saveStatus === 'error' && (
           <span className="text-rose-500 font-medium">Save failed</span>

@@ -9,6 +9,7 @@ import { ShortcutsModal } from './components/Modals/ShortcutsModal';
 import { DocumentScannerModal } from './components/Modals/DocumentScannerModal';
 import { Folder, FolderStats, Note, SortOption, ViewType } from './types';
 import * as api from './api';
+import { getSyncSnapshot, subscribeSyncStatus, SyncStatusSnapshot } from './sync/localStore';
 import { FileText, SquarePen } from 'lucide-react';
 
 function isNoteEmpty(note: Note | null | undefined): boolean {
@@ -58,6 +59,7 @@ export const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState<SortOption>('updated_desc');
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
+  const [syncSnapshot, setSyncSnapshot] = useState<SyncStatusSnapshot>(() => getSyncSnapshot());
 
   // Modals state
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
@@ -124,7 +126,26 @@ export const App: React.FC = () => {
     }
   }, [selectedView, selectedFolderId, searchQuery, sortOption]);
 
-  // Initial load
+  // Initial load & live sync subscription
+  useEffect(() => {
+    const unsubscribe = subscribeSyncStatus((snap) => {
+      setSyncSnapshot(snap);
+    });
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const handleOnline = async () => {
+      const ok = await api.syncWithServer(false);
+      if (ok) {
+        await loadFolders();
+        await loadNotes();
+      }
+    };
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, [loadFolders, loadNotes]);
+
   useEffect(() => {
     loadFolders();
   }, [loadFolders]);
@@ -518,6 +539,7 @@ export const App: React.FC = () => {
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenShortcuts={() => setIsShortcutsOpen(true)}
         saveStatus={saveStatus}
+        syncSnapshot={syncSnapshot}
       />
 
       {/* Main 3-Pane Body */}
@@ -646,6 +668,7 @@ export const App: React.FC = () => {
           totalNotes: stats.all,
           totalFolders: folders.length
         }}
+        syncSnapshot={syncSnapshot}
         onRefreshData={async () => {
           await loadFolders();
           await loadNotes();

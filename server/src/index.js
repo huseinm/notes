@@ -9,6 +9,8 @@ import foldersRouter from './routes/folders.js';
 import notesRouter from './routes/notes.js';
 import uploadRouter from './routes/upload.js';
 import exportRouter from './routes/export.js';
+import authRouter, { requireAuth, isAuthEnabled } from './routes/auth.js';
+import syncRouter from './routes/sync.js';
 
 dotenv.config();
 
@@ -32,16 +34,21 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     app: 'Notes Self-Hosted',
-    version: '1.0.0',
+    version: '1.1.0',
+    authRequired: isAuthEnabled(),
     timestamp: new Date().toISOString()
   });
 });
 
-// API Routes
-app.use('/api/folders', foldersRouter);
-app.use('/api/notes', notesRouter);
-app.use('/api/upload', uploadRouter);
-app.use('/api/export', exportRouter);
+// Auth routes (public so clients can check status and log in)
+app.use('/api/auth', authRouter);
+
+// Protected API Routes (open by default unless a server password is set)
+app.use('/api/folders', requireAuth, foldersRouter);
+app.use('/api/notes', requireAuth, notesRouter);
+app.use('/api/upload', requireAuth, uploadRouter);
+app.use('/api/export', requireAuth, exportRouter);
+app.use('/api/sync', requireAuth, syncRouter);
 
 // Serve frontend static assets if available (Production & Docker)
 const clientDistPath = path.resolve(__dirname, '../../client/dist');
