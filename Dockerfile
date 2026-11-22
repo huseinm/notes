@@ -1,7 +1,8 @@
 # ==========================================
 # Stage 1: Build Frontend (Vite + React)
+# Runs natively on $BUILDPLATFORM to avoid QEMU emulation for static JS/CSS assets
 # ==========================================
-FROM node:22-alpine AS client-builder
+FROM --platform=$BUILDPLATFORM node:22-alpine AS client-builder
 
 WORKDIR /app/client
 
@@ -13,15 +14,14 @@ RUN npm run build
 
 # ==========================================
 # Stage 2: Production Server
+# Uses node:22-slim (glibc) so better-sqlite3 uses official prebuilt binaries
+# instead of compiling 250k lines of sqlite3.c under QEMU arm64 emulation
 # ==========================================
-FROM node:22-alpine
-
-# Install build dependencies for native SQLite compilation on Alpine
-RUN apk add --no-cache python3 make g++
+FROM node:22-slim
 
 WORKDIR /app
 
-# Install server dependencies
+# Install server dependencies (uses prebuilt better-sqlite3 binary)
 COPY server/package*.json ./server/
 WORKDIR /app/server
 RUN npm ci --omit=dev
@@ -44,8 +44,8 @@ VOLUME ["/app/data"]
 
 EXPOSE 3000
 
-# Healthcheck
+# Healthcheck using Node's built-in fetch
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
+  CMD node -e "fetch('http://127.0.0.1:3000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
 
 CMD ["node", "src/index.js"]
