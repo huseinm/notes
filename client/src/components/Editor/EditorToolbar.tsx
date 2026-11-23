@@ -110,9 +110,9 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
   };
 
   return (
-    <div className="no-print h-12 border-b border-notes-lightBorder dark:border-notes-darkBorder/60 bg-notes-lightBg dark:bg-notes-darkBg flex items-center justify-between px-4 select-none gap-2 transition-colors">
+    <div className="no-print h-12 border-b border-notes-lightBorder dark:border-notes-darkBorder/60 bg-notes-lightBg dark:bg-notes-darkBg flex items-center justify-between px-2.5 sm:px-4 select-none gap-1.5 transition-colors">
       {/* Left side: Mobile Back, Delete / Restore, Folder */}
-      <div className="flex items-center gap-1 sm:gap-1.5">
+      <div className="flex items-center gap-1 flex-shrink-0">
         {onBackToList && (
           <button
             onClick={onBackToList}
@@ -156,7 +156,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
               }`}
             >
               <FolderIcon size={14} className="text-notes-yellow" />
-              <span className="max-w-[110px] truncate hidden sm:inline">
+              <span className="max-w-[90px] truncate hidden xl:inline">
                 {folders.find((f) => f.id === currentFolderId)?.name || 'Folder'}
               </span>
               <ChevronDown size={11} />
@@ -189,7 +189,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
       </div>
 
       {/* Middle side: Formatting Tools */}
-      <div className="flex items-center gap-0.5 sm:gap-1">
+      <div className="flex items-center gap-0.5 sm:gap-1 min-w-0">
         {/* Typography Menu: Aa */}
         <div className="relative" ref={typographyMenuRef}>
           <button
@@ -271,6 +271,45 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                 <span>Monospaced</span>
                 <span className="text-[10px] opacity-50">Code</span>
               </button>
+
+              {/* Compact inline formatting row inside Aa menu for smaller/medium screens */}
+              <div className="xl:hidden border-t border-notes-lightBorder dark:border-notes-darkBorder/50 pt-1.5 mt-1 px-2 flex items-center justify-between gap-0.5">
+                <button
+                  onClick={() => editor.chain().focus().toggleBold().run()}
+                  title="Bold"
+                  className={`p-1.5 rounded ${editor.isActive('bold') ? 'bg-notes-yellow/20 text-amber-600 dark:text-notes-yellow' : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'}`}
+                >
+                  <Bold size={14} />
+                </button>
+                <button
+                  onClick={() => editor.chain().focus().toggleItalic().run()}
+                  title="Italic"
+                  className={`p-1.5 rounded ${editor.isActive('italic') ? 'bg-notes-yellow/20 text-amber-600 dark:text-notes-yellow' : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'}`}
+                >
+                  <Italic size={14} />
+                </button>
+                <button
+                  onClick={() => editor.chain().focus().toggleUnderline().run()}
+                  title="Underline"
+                  className={`p-1.5 rounded ${editor.isActive('underline') ? 'bg-notes-yellow/20 text-amber-600 dark:text-notes-yellow' : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'}`}
+                >
+                  <UnderlineIcon size={14} />
+                </button>
+                <button
+                  onClick={() => editor.chain().focus().toggleBulletList().run()}
+                  title="Bullet List"
+                  className={`p-1.5 rounded ${editor.isActive('bulletList') ? 'bg-notes-yellow/20 text-amber-600 dark:text-notes-yellow' : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'}`}
+                >
+                  <List size={14} />
+                </button>
+                <button
+                  onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                  title="Numbered List"
+                  className={`p-1.5 rounded ${editor.isActive('orderedList') ? 'bg-notes-yellow/20 text-amber-600 dark:text-notes-yellow' : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'}`}
+                >
+                  <ListOrdered size={14} />
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -368,13 +407,13 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
         </div>
 
         {/* Separator */}
-        <div className="h-4 w-px bg-notes-lightBorder dark:bg-notes-darkBorder mx-1 hidden sm:block"></div>
+        <div className="h-4 w-px bg-notes-lightBorder dark:bg-notes-darkBorder mx-1 hidden lg:block"></div>
 
         {/* Basic formatting */}
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           title="Bold (Cmd+B)"
-          className={`p-1.5 rounded-md transition-colors hidden sm:inline-flex ${
+          className={`p-1.5 rounded-md transition-colors hidden lg:inline-flex ${
             editor.isActive('bold')
               ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
               : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
@@ -386,7 +425,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
           title="Italic (Cmd+I)"
-          className={`p-1.5 rounded-md transition-colors hidden sm:inline-flex ${
+          className={`p-1.5 rounded-md transition-colors hidden lg:inline-flex ${
             editor.isActive('italic')
               ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
               : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
@@ -398,7 +437,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
         <button
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           title="Underline (Cmd+U)"
-          className={`p-1.5 rounded-md transition-colors hidden sm:inline-flex ${
+          className={`p-1.5 rounded-md transition-colors hidden lg:inline-flex ${
             editor.isActive('underline')
               ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
               : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
@@ -410,7 +449,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
         <button
           onClick={() => editor.chain().focus().toggleStrike().run()}
           title="Strikethrough"
-          className={`p-1.5 rounded-md transition-colors hidden sm:inline-flex ${
+          className={`p-1.5 rounded-md transition-colors hidden xl:inline-flex ${
             editor.isActive('strike')
               ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
               : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
@@ -422,7 +461,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           title="Bullet List"
-          className={`p-1.5 rounded-md transition-colors hidden md:inline-flex ${
+          className={`p-1.5 rounded-md transition-colors hidden xl:inline-flex ${
             editor.isActive('bulletList')
               ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
               : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
@@ -434,7 +473,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           title="Numbered List"
-          className={`p-1.5 rounded-md transition-colors hidden md:inline-flex ${
+          className={`p-1.5 rounded-md transition-colors hidden xl:inline-flex ${
             editor.isActive('orderedList')
               ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
               : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
@@ -446,7 +485,7 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           title="Quote"
-          className={`p-1.5 rounded-md transition-colors hidden lg:inline-flex ${
+          className={`p-1.5 rounded-md transition-colors hidden xl:inline-flex ${
             editor.isActive('blockquote')
               ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
               : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
@@ -479,13 +518,13 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
             className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-amber-600 dark:text-notes-yellow font-medium text-xs transition-colors"
           >
             <ScanLine size={16} />
-            <span className="hidden sm:inline">Scan</span>
+            <span className="hidden xl:inline">Scan</span>
           </button>
         )}
       </div>
 
       {/* Right side: Pin, Export, New Note */}
-      <div className="flex items-center gap-1 sm:gap-2">
+      <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
         {/* Pin Button */}
         <button
           onClick={onTogglePin}
@@ -564,10 +603,10 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           <button
             onClick={onNewNote}
             title="New Note (Cmd+N)"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-notes-yellow hover:bg-notes-yellowHover text-black font-semibold text-xs transition-colors shadow-xs"
+            className="flex-shrink-0 whitespace-nowrap flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-notes-yellow hover:bg-notes-yellowHover text-black font-semibold text-xs transition-colors shadow-xs"
           >
             <SquarePen size={14} />
-            <span className="hidden sm:inline">New Note</span>
+            <span className="hidden lg:inline">New Note</span>
           </button>
         )}
       </div>

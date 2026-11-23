@@ -74,7 +74,7 @@ export const AudioNode = Node.create({
   },
 
   addNodeView() {
-    return ({ node }) => {
+    return ({ node, getPos, editor }) => {
       const dom = document.createElement('div');
       dom.setAttribute('data-type', 'voice-memo');
       dom.setAttribute('data-src', node.attrs.src || '');
@@ -83,22 +83,64 @@ export const AudioNode = Node.create({
       dom.className =
         'my-3 p-3 rounded-xl bg-black/5 dark:bg-white/5 border border-notes-lightBorder dark:border-notes-darkBorder flex flex-col gap-2 max-w-md select-none';
 
-      const header = document.createElement('div');
-      header.className =
-        'text-xs font-semibold text-amber-600 dark:text-notes-yellow flex items-center gap-1.5';
-      header.textContent = `🎙️ ${node.attrs.title || 'Voice Memo'}`;
+      // Header row with microphone icon + editable title input
+      const headerRow = document.createElement('div');
+      headerRow.className = 'flex items-center gap-1.5 w-full';
+
+      const iconSpan = document.createElement('span');
+      iconSpan.className = 'text-xs select-none flex-shrink-0';
+      iconSpan.textContent = '🎙️';
+
+      const titleInput = document.createElement('input');
+      titleInput.type = 'text';
+      titleInput.value = node.attrs.title || 'Voice Memo';
+      titleInput.placeholder = 'Voice Memo Title...';
+      titleInput.title = 'Click to rename voice memo';
+      titleInput.disabled = !editor.isEditable;
+      titleInput.className =
+        'flex-1 min-w-0 text-xs font-semibold text-amber-600 dark:text-notes-yellow bg-transparent border border-transparent hover:border-notes-lightBorder dark:hover:border-notes-darkBorder focus:border-notes-yellow focus:bg-black/5 dark:focus:bg-black/30 rounded px-1.5 py-0.5 outline-none transition-colors';
+
+      const commitTitleChange = () => {
+        const nextTitle = titleInput.value.trim() || 'Voice Memo';
+        if (nextTitle === node.attrs.title) return;
+        if (typeof getPos === 'function' && editor.isEditable) {
+          const pos = getPos();
+          if (typeof pos === 'number') {
+            const tr = editor.view.state.tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              title: nextTitle
+            });
+            editor.view.dispatch(tr);
+          }
+        }
+      };
+
+      titleInput.addEventListener('mousedown', (e) => e.stopPropagation());
+      titleInput.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+      titleInput.addEventListener('click', (e) => e.stopPropagation());
+      titleInput.addEventListener('keydown', (e) => {
+        e.stopPropagation();
+        if (e.key === 'Enter' || e.key === 'Escape') {
+          e.preventDefault();
+          titleInput.blur();
+        }
+      });
+      titleInput.addEventListener('blur', commitTitleChange);
+      titleInput.addEventListener('change', commitTitleChange);
+
+      headerRow.appendChild(iconSpan);
+      headerRow.appendChild(titleInput);
 
       const audio = document.createElement('audio');
       audio.controls = true;
       audio.preload = 'metadata';
       audio.src = node.attrs.src || '';
       audio.className = 'w-full h-10';
-      // Prevent ProseMirror from intercepting clicks/touches on the native audio player controls
       audio.addEventListener('mousedown', (e) => e.stopPropagation());
       audio.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
       audio.addEventListener('click', (e) => e.stopPropagation());
 
-      dom.appendChild(header);
+      dom.appendChild(headerRow);
       dom.appendChild(audio);
 
       return {
@@ -109,13 +151,22 @@ export const AudioNode = Node.create({
           const nextTitle = updatedNode.attrs.title || 'Voice Memo';
           dom.setAttribute('data-src', nextSrc);
           dom.setAttribute('data-title', nextTitle);
-          header.textContent = `🎙️ ${nextTitle}`;
+          if (document.activeElement !== titleInput && titleInput.value !== nextTitle) {
+            titleInput.value = nextTitle;
+          }
+          titleInput.disabled = !editor.isEditable;
           if (audio.getAttribute('src') !== nextSrc) {
             audio.src = nextSrc;
           }
           return true;
         },
-        stopEvent: () => true
+        stopEvent: (event) => {
+          const target = event.target as HTMLElement | null;
+          if (target && (target === titleInput || target === audio || dom.contains(target))) {
+            return true;
+          }
+          return false;
+        }
       };
     };
   }
