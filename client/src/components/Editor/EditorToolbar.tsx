@@ -206,7 +206,56 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
           </button>
 
           {openMenu === 'typography' && (
-            <div className="absolute left-0 top-9 z-30 w-40 py-1 bg-white dark:bg-[#252528] border border-notes-lightBorder dark:border-notes-darkBorder rounded-lg shadow-xl text-xs space-y-0.5 text-notes-lightText dark:text-notes-darkText">
+            <div className="absolute left-0 top-9 z-30 w-52 py-1.5 bg-white dark:bg-[#252528] border border-notes-lightBorder dark:border-notes-darkBorder rounded-xl shadow-xl text-xs space-y-1 text-notes-lightText dark:text-notes-darkText">
+              {/* Top Row: Inline Text Styles (Bold, Italic, Underline, Strike) */}
+              <div className="px-2 pb-1.5 border-b border-notes-lightBorder dark:border-notes-darkBorder/60 flex items-center justify-between gap-1">
+                <button
+                  onClick={() => editor.chain().focus().toggleBold().run()}
+                  title="Bold (Cmd+B)"
+                  className={`flex-1 py-1.5 rounded-md flex items-center justify-center transition-colors ${
+                    editor.isActive('bold')
+                      ? 'bg-notes-yellow text-black font-bold'
+                      : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'
+                  }`}
+                >
+                  <Bold size={15} />
+                </button>
+                <button
+                  onClick={() => editor.chain().focus().toggleItalic().run()}
+                  title="Italic (Cmd+I)"
+                  className={`flex-1 py-1.5 rounded-md flex items-center justify-center transition-colors ${
+                    editor.isActive('italic')
+                      ? 'bg-notes-yellow text-black font-bold'
+                      : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'
+                  }`}
+                >
+                  <Italic size={15} />
+                </button>
+                <button
+                  onClick={() => editor.chain().focus().toggleUnderline().run()}
+                  title="Underline (Cmd+U)"
+                  className={`flex-1 py-1.5 rounded-md flex items-center justify-center transition-colors ${
+                    editor.isActive('underline')
+                      ? 'bg-notes-yellow text-black font-bold'
+                      : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'
+                  }`}
+                >
+                  <UnderlineIcon size={15} />
+                </button>
+                <button
+                  onClick={() => editor.chain().focus().toggleStrike().run()}
+                  title="Strikethrough"
+                  className={`flex-1 py-1.5 rounded-md flex items-center justify-center transition-colors ${
+                    editor.isActive('strike')
+                      ? 'bg-notes-yellow text-black font-bold'
+                      : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'
+                  }`}
+                >
+                  <Strikethrough size={15} />
+                </button>
+              </div>
+
+              {/* Heading & Paragraph Styles */}
               <button
                 onClick={() => {
                   editor.chain().focus().toggleHeading({ level: 1 }).run();
@@ -272,42 +321,49 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
                 <span className="text-[10px] opacity-50">Code</span>
               </button>
 
-              {/* Compact inline formatting row inside Aa menu for smaller/medium screens */}
-              <div className="xl:hidden border-t border-notes-lightBorder dark:border-notes-darkBorder/50 pt-1.5 mt-1 px-2 flex items-center justify-between gap-0.5">
+              {/* Bottom Row: Lists & Blockquote */}
+              <div className="border-t border-notes-lightBorder dark:border-notes-darkBorder/60 pt-1.5 mt-1 px-2 flex items-center justify-between gap-1">
                 <button
-                  onClick={() => editor.chain().focus().toggleBold().run()}
-                  title="Bold"
-                  className={`p-1.5 rounded ${editor.isActive('bold') ? 'bg-notes-yellow/20 text-amber-600 dark:text-notes-yellow' : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'}`}
-                >
-                  <Bold size={14} />
-                </button>
-                <button
-                  onClick={() => editor.chain().focus().toggleItalic().run()}
-                  title="Italic"
-                  className={`p-1.5 rounded ${editor.isActive('italic') ? 'bg-notes-yellow/20 text-amber-600 dark:text-notes-yellow' : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'}`}
-                >
-                  <Italic size={14} />
-                </button>
-                <button
-                  onClick={() => editor.chain().focus().toggleUnderline().run()}
-                  title="Underline"
-                  className={`p-1.5 rounded ${editor.isActive('underline') ? 'bg-notes-yellow/20 text-amber-600 dark:text-notes-yellow' : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'}`}
-                >
-                  <UnderlineIcon size={14} />
-                </button>
-                <button
-                  onClick={() => editor.chain().focus().toggleBulletList().run()}
+                  onClick={() => {
+                    editor.chain().focus().toggleBulletList().run();
+                    setOpenMenu(null);
+                  }}
                   title="Bullet List"
-                  className={`p-1.5 rounded ${editor.isActive('bulletList') ? 'bg-notes-yellow/20 text-amber-600 dark:text-notes-yellow' : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'}`}
+                  className={`flex-1 py-1.5 rounded-md flex items-center justify-center gap-1 transition-colors ${
+                    editor.isActive('bulletList')
+                      ? 'bg-notes-yellow text-black font-semibold'
+                      : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'
+                  }`}
                 >
-                  <List size={14} />
+                  <List size={15} />
                 </button>
                 <button
-                  onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                  onClick={() => {
+                    editor.chain().focus().toggleOrderedList().run();
+                    setOpenMenu(null);
+                  }}
                   title="Numbered List"
-                  className={`p-1.5 rounded ${editor.isActive('orderedList') ? 'bg-notes-yellow/20 text-amber-600 dark:text-notes-yellow' : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'}`}
+                  className={`flex-1 py-1.5 rounded-md flex items-center justify-center gap-1 transition-colors ${
+                    editor.isActive('orderedList')
+                      ? 'bg-notes-yellow text-black font-semibold'
+                      : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'
+                  }`}
                 >
-                  <ListOrdered size={14} />
+                  <ListOrdered size={15} />
+                </button>
+                <button
+                  onClick={() => {
+                    editor.chain().focus().toggleBlockquote().run();
+                    setOpenMenu(null);
+                  }}
+                  title="Blockquote"
+                  className={`flex-1 py-1.5 rounded-md flex items-center justify-center gap-1 transition-colors ${
+                    editor.isActive('blockquote')
+                      ? 'bg-notes-yellow text-black font-semibold'
+                      : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover'
+                  }`}
+                >
+                  <Quote size={15} />
                 </button>
               </div>
             </div>
@@ -405,94 +461,6 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
             </div>
           )}
         </div>
-
-        {/* Separator */}
-        <div className="h-4 w-px bg-notes-lightBorder dark:bg-notes-darkBorder mx-1 hidden lg:block"></div>
-
-        {/* Basic formatting */}
-        <button
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          title="Bold (Cmd+B)"
-          className={`p-1.5 rounded-md transition-colors hidden lg:inline-flex ${
-            editor.isActive('bold')
-              ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
-              : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
-          }`}
-        >
-          <Bold size={16} />
-        </button>
-
-        <button
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          title="Italic (Cmd+I)"
-          className={`p-1.5 rounded-md transition-colors hidden lg:inline-flex ${
-            editor.isActive('italic')
-              ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
-              : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
-          }`}
-        >
-          <Italic size={16} />
-        </button>
-
-        <button
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          title="Underline (Cmd+U)"
-          className={`p-1.5 rounded-md transition-colors hidden lg:inline-flex ${
-            editor.isActive('underline')
-              ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
-              : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
-          }`}
-        >
-          <UnderlineIcon size={16} />
-        </button>
-
-        <button
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          title="Strikethrough"
-          className={`p-1.5 rounded-md transition-colors hidden xl:inline-flex ${
-            editor.isActive('strike')
-              ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
-              : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
-          }`}
-        >
-          <Strikethrough size={16} />
-        </button>
-
-        <button
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          title="Bullet List"
-          className={`p-1.5 rounded-md transition-colors hidden xl:inline-flex ${
-            editor.isActive('bulletList')
-              ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
-              : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
-          }`}
-        >
-          <List size={16} />
-        </button>
-
-        <button
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          title="Numbered List"
-          className={`p-1.5 rounded-md transition-colors hidden xl:inline-flex ${
-            editor.isActive('orderedList')
-              ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
-              : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
-          }`}
-        >
-          <ListOrdered size={16} />
-        </button>
-
-        <button
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          title="Quote"
-          className={`p-1.5 rounded-md transition-colors hidden xl:inline-flex ${
-            editor.isActive('blockquote')
-              ? 'bg-notes-yellow/20 text-amber-700 dark:text-notes-yellow'
-              : 'hover:bg-notes-lightHover dark:hover:bg-notes-darkHover text-notes-lightMuted dark:text-notes-darkMuted hover:text-black dark:hover:text-white'
-          }`}
-        >
-          <Quote size={16} />
-        </button>
 
         {/* Image Attachment Button */}
         <input
