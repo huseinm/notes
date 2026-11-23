@@ -65,9 +65,17 @@ export const NotesList: React.FC<NotesListProps> = ({
       .map((s) => s.trim())
       .find((s) => s.length > 0) || '';
 
+    const hasVoiceMemo =
+      (note.content || '').includes('data-type="voice-memo"') ||
+      (note.content || '').includes('<audio');
+    const hasImage = (note.content || '').includes('<img');
+
     const hasCustomTitle = Boolean(note.title && note.title.trim());
-    const displayTitle = hasCustomTitle ? note.title.trim() : (firstLine || 'New Note');
-    const isPlaceholderTitle = !hasCustomTitle && !firstLine;
+    const fallbackMediaTitle = hasVoiceMemo ? '🎙️ Voice Memo' : hasImage ? '📷 Photo / Scan' : '';
+    const displayTitle = hasCustomTitle
+      ? note.title.trim()
+      : firstLine || fallbackMediaTitle || 'New Note';
+    const isPlaceholderTitle = !hasCustomTitle && !firstLine && !fallbackMediaTitle;
 
     // Excerpt: clean text preview after the title
     let excerpt = (note.plain_text || '').trim();
@@ -75,7 +83,11 @@ export const NotesList: React.FC<NotesListProps> = ({
       excerpt = excerpt.slice(displayTitle.length).trim();
     }
     if (!excerpt) {
-      excerpt = 'No additional text';
+      excerpt = hasVoiceMemo
+        ? '🎙️ Audio voice recording'
+        : hasImage
+        ? '📷 Attached image / scan'
+        : 'No additional text';
     }
 
     return (

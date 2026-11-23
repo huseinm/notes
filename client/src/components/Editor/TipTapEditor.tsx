@@ -15,6 +15,7 @@ import { EditorToolbar } from './EditorToolbar';
 import { uploadImage } from '../../api';
 import { formatFullNoteTimestamp } from '../../utils/date';
 import { DocumentScannerModal } from '../Modals/DocumentScannerModal';
+import { AudioNode } from './AudioExtension';
 
 function htmlToMarkdown(html: string): string {
   const parser = new DOMParser();
@@ -162,6 +163,8 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
           !pending.title.trim() &&
           !pending.plain_text.trim() &&
           !pending.content.includes('<img') &&
+          !pending.content.includes('<audio') &&
+          !pending.content.includes('data-type="voice-memo"') &&
           !pending.content.includes('<table') &&
           !pending.content.includes('data-type="taskList"');
         if (!isPendingEmpty) {
@@ -212,7 +215,8 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
       Image.configure({
         inline: true,
         allowBase64: true
-      })
+      }),
+      AudioNode
     ],
     content: note.content || '',
     editable: !isTrashView,

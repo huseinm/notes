@@ -19,6 +19,8 @@ function isNoteEmpty(note: Note | null | undefined): boolean {
   const html = note.content || '';
   const hasMediaOrStructure =
     html.includes('<img') ||
+    html.includes('<audio') ||
+    html.includes('data-type="voice-memo"') ||
     html.includes('<table') ||
     html.includes('data-type="taskList"') ||
     html.includes('<hr') ||
